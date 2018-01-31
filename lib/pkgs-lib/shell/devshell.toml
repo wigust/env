@@ -1,5 +1,3 @@
-imports = [ "git.hooks" ]
-
 [devshell]
 packages = [
   "git-crypt"

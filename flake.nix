@@ -16,19 +16,28 @@
         inputs = { flake-compat.follows = "flake-compat"; naersk.follows = "naersk"; nixpkgs.follows = "override"; utils.follows = "utils"; };
       };
       devshell.url = "github:numtide/devshell";
+      doom-emacs = {
+        url = "github:hlissner/doom-emacs/develop";
+        flake = false;
+      };
+      emacs.url = "github:nix-community/emacs-overlay";
+      nix-doom-emacs.url = "github:vlaci/nix-doom-emacs";
+      nix-doom-emacs.inputs.doom-emacs.follows = "doom-emacs";
       flake-compat.url = "github:BBBSnowball/flake-compat/pr-1";
       flake-compat.flake = false;
       home.url = "github:nix-community/home-manager";
       home.inputs.nixpkgs.follows = "nixos";
+      nur.url = "github:nix-community/NUR";
       naersk.url = "github:nmattia/naersk";
       naersk.inputs.nixpkgs.follows = "override";
       nixos-hardware.url = "github:nixos/nixos-hardware";
+      sops-nix.url = "github:Mic92/sops-nix";
       utils.url = "github:numtide/flake-utils";
       pkgs.url = "path:./pkgs";
       pkgs.inputs.nixpkgs.follows = "nixos";
     };
 
-  outputs = inputs@{ deploy, nixos, nur, self, utils, ... }:
+  outputs = inputs@{ nixos, self, utils, ... }:
     let
       lib = import ./lib { inherit self nixos utils inputs; };
     in

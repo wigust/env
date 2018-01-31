@@ -1,5 +1,4 @@
 { users, profiles, userProfiles, ... }:
-
 {
   system = with profiles; rec {
     base = [ core users.nixos users.root ];

@@ -1,0 +1,27 @@
+name: Build
+
+# Trigger the workflow on push or pull request
+on:
+  push:
+
+jobs:
+  witness:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v11
+      with:
+        install_url: https://github.com/numtide/nix-flakes-installer/releases/download/nix-3.0pre20200820_4d77513/install
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+    - uses: cachix/cachix-action@v6
+      with:
+        name: busc-env
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - name: Add binary caches
+      run: |
+        cachix use iohk
+        cachix use busc-env
+    - name: Build
+      run: |
+        nix-build -A witness

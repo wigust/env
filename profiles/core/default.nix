@@ -2,11 +2,13 @@
 let inherit (lib) fileContents;
 in
 {
-
+  imports = [
+    ../../secrets.nix
+  ];
   nix.systemFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
 
   environment = {
-
+    pathsToLink = [ "/share/zsh" ];
     systemPackages = with pkgs; [
       binutils
       coreutils
@@ -33,12 +35,6 @@ in
       whois
     ];
 
-    shellInit = ''
-      export STARSHIP_CONFIG=${
-        pkgs.writeText "starship.toml"
-        (fileContents ./starship.toml)
-      }
-    '';
 
     shellAliases =
       let ifSudo = lib.mkIf config.security.sudo.enable;
@@ -70,7 +66,7 @@ in
         nepl = "n repl '<nixpkgs>'";
         srch = "ns nixos";
         orch = "ns override";
-        nrb = ifSudo "sudo nixos-rebuild";
+        nrb = ifSudo "sudo nixos-rebuild --flake $HOME/env";
         mn = ''
           manix "" | grep '^# ' | sed 's/^# \(.*\) (.*/\1/;s/ (.*//;s/^# //' | sk --preview="manix '{}'" | xargs manix
         '';
@@ -121,28 +117,32 @@ in
 
     useSandbox = true;
 
+
     allowedUsers = [ "@wheel" ];
 
     trustedUsers = [ "root" "@wheel" ];
 
     extraOptions = ''
-      min-free = 536870912
       keep-outputs = true
       keep-derivations = true
       fallback = true
+      min-free = 536870912
+      builders-use-substitutes = true
+      secret-key-files = ${config.sops.secrets.cache_private_key.path}
     '';
 
   };
 
   programs.bash = {
-    promptInit = ''
-      eval "$(${pkgs.starship}/bin/starship init bash)"
-    '';
+
     interactiveShellInit = ''
       eval "$(${pkgs.direnv}/bin/direnv hook bash)"
     '';
-  };
+    security = {
+      protectKernelImage = true;
+    };
 
-  services.earlyoom.enable = true;
+    services.earlyoom.enable = true;
 
-}
+    users.mutableUsers = false;
+  }

@@ -1,0 +1,11 @@
+Host witness-builder
+     HostName 100.104.11.85
+     User root
+     IdentitiesOnly yes
+     IdentityFile /etc/ssh/ssh_host_rsa_key
+
+Host vigilant-builder
+     HostName 100.71.60.103
+     User root
+     IdentitiesOnly yes
+     IdentityFile /etc/ssh/ssh_host_rsa_key

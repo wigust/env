@@ -63,6 +63,8 @@ let
     # Everything in `./modules/list.nix`.
     flakeModules = { imports = builtins.attrValues self.nixosModules ++ extern.modules; };
 
+    secrets = ../../secrets.nix;
+
     cachix = ../../cachix.nix;
   };
 

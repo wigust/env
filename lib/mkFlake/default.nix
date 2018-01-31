@@ -4,10 +4,8 @@ let
   inherit (inputs) utils deploy;
   evalFlakeArgs = dev.callLibs ./evalArgs.nix;
 in
-
 { self, ... } @ args:
 let
-
   cfg = (evalFlakeArgs { inherit args; }).config;
 
   multiPkgs = os.mkPkgs { inherit (cfg) extern overrides; };
@@ -52,4 +50,3 @@ let
     });
 in
 outputs // systemOutputs
-
