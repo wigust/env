@@ -22,8 +22,7 @@ brew tap caskroom/versions
 brew install elixir elm erlang python python3 ruby rust
 brew cask install java java8
 
-brew tap homebrew/homebrew-php
-brew install php72 composer
+brew install php composer
 
 # Tools
 brew install git grails gradle yarn
