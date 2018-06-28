@@ -8,31 +8,29 @@ cp .zshrc ~/.zshrc
 # Homebrew
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
+# Tools
+brew install git yarn
+
 # NVM
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+brew install nvm
 nvm install node
 
-# JENV
-brew install jenv
-echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
-echo 'eval "$(jenv init -)"' >> ~/.zshrc
+# Erlang and Elixir
+brew install kerl
+\curl -sSL https://raw.githubusercontent.com/taylor/kiex/master/install | bash -s
+kiex install 1.6.5
+kerl build 20.3 20.3
 
-# Languages
-brew tap caskroom/versions
-brew install elixir elm erlang python python3 ruby rust
-brew cask install java java8
+# Python
+brew install pipenv pyenv
+pyenv install 3.6.5
 
-brew install php composer
-
-# Tools
-brew install git grails gradle yarn
-
-# Dev ops
-brew cask install docker vagrant virtualbox
-brew install ansible awscli
+# Docker + k8s
+brew cask install docker google-cloud-sdk
+brew install kubernetes-cli kubernetes-helm
 
 # Others
-brew install openssl@1.1 libpng
+brew install openssl@1.1 libpng chromedriver watchman
 
 # Personal tools
 brew cask install \
@@ -41,7 +39,7 @@ dropbox \
 eddie \
 mactex \
 postman \
-robo-3t \
 transmission \
 visual-studio-code \
-vlc
+vlc \
+iterm2
