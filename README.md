@@ -1,2 +1,2 @@
-# mac-env
-The setup and configuration I use on my Mac
+# env
+My personal configurations
