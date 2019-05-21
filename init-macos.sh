@@ -3,7 +3,7 @@ xcode-select --install
 
 # Oh My Zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-cp .zshrc ~/.zshrc
+ln -s .zshrc ~/.zshrc
 
 # Homebrew
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -50,4 +50,4 @@ brew cask install emacs-mac-spacemacs-icon
 
 # Spacemacs
 git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
-cp .spacemacs ~/.spacemacs
+ln -s .spacemacs ~/.spacemacs
