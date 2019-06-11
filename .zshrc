@@ -1,14 +1,11 @@
 # ZSH Path
 export ZSH=$HOME/.oh-my-zsh
 
-
 # Personal settings
-ENABLE_CORRECTION="true"
-COMPLETION_WAITING_DOTS="true"
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Plugins
-plugins=(brew common-aliases git docker docker-compose osx)
+plugins=(common-aliases git docker docker-compose)
 plugins+=(node)
 plugins+=(cabal mix pip yarn)
 
@@ -16,16 +13,8 @@ plugins+=(cabal mix pip yarn)
 ZSH_THEME="avit"
 source $ZSH/oh-my-zsh.sh
 
-export PATH="$HOME/.local/bin:$PATH"
-
-test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
 export NVM_DIR="$HOME/.nvm"
-. "/usr/local/opt/nvm/nvm.sh"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# Pyenv init
-eval "$(pyenv init -)"
-
-[ -s "/Users/ben/.jabba/jabba.sh" ] && source "/Users/ben/.jabba/jabba.sh"
-
-export ANDROID_HOME="/Users/ben/Library/Android/sdk"
-
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
