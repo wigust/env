@@ -7,7 +7,12 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Plugins
 plugins=(common-aliases git docker docker-compose)
 plugins+=(node)
-plugins+=(cabal mix pip yarn)
+plugins+=(nvm)
+plugins+=(cabal stack mix pip yarn)
+
+if [[ $OSTYPE == darwin* ]]; then
+    plugins+=(osx)
+fi
 
 # Theme
 ZSH_THEME="avit"
