@@ -12,6 +12,8 @@ plugins+=(cabal stack mix pip yarn)
 
 if [[ $OSTYPE == darwin* ]]; then
     plugins+=(osx)
+else
+    export PATH="$HOME/.local/bin:$PATH"
 fi
 
 # Theme
