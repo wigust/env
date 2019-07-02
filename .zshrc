@@ -25,3 +25,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+
+
+alias wcat_sync_desktop='rsync -r --exclude="/.git" --filter="dir-merge,- .gitignore" ~/development/webCAT ben@192.168.86.163:/home/ben/development'
+alias wcat_sync_laptop='rsync -r --exclude="/.git" --filter="dir-merge,- .gitignore" ~/development/webCAT ben@192.168.86.235:/Users/ben/development'
