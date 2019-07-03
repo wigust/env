@@ -320,7 +320,7 @@ you should place your code here."
       (mac-auto-operator-composition-mode))
 
 (load-theme 'doom-one)
-
+(setq-default evil-kill-on-visual-paste nil)
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
