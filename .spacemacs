@@ -36,7 +36,6 @@ values."
      docker
      debug
      lsp
-     nlinum
      ibuffer
      ;; Languages & File types
      html
@@ -348,6 +347,12 @@ you should place your code here."
 (setq lsp-haskell-process-path-hie "hie-wrapper")
 (require 'lsp-haskell)
 (add-hook 'haskell-mode-hook #'lsp)
+
+;; Load secret configuration if the file is present
+(if (file-exists-p "~/.spacemacs.secret")
+    (load "~/.spacemacs.secret")
+    (message "secret config not found")
+    )
 )
 
 ;; Do not write anything past this comment. This is where Emacs will

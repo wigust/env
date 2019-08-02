@@ -29,5 +29,5 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
 
 
-alias wcat_sync_desktop='rsync -r --exclude="/.git" --filter="dir-merge,- .gitignore" ~/development/webCAT ben@192.168.86.163:/home/ben/development'
+alias wcat_sync_desktop='rsync -r --exclude="/.git" --filter="dir-merge,- .gitignore" ~/development/webCAT ben@192.168.1.3:/home/ben/development'
 alias wcat_sync_laptop='rsync -r --exclude="/.git" --filter="dir-merge,- .gitignore" ~/development/webCAT ben@192.168.86.235:/Users/ben/development'
