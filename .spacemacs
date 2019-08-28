@@ -37,6 +37,7 @@ values."
      debug
      lsp
      ibuffer
+     nixos
      ;; Languages & File types
      html
      javascript
