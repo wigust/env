@@ -98,6 +98,7 @@ values."
   (when (spacemacs/system-is-mac)
     (append dotspacemacs-configuration-layers
             '(osx)))
+  ;; TODO: https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
   )
 
 (defun dotspacemacs/init ()

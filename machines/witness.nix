@@ -32,9 +32,11 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    git oh-my-zsh wget curl
+    git oh-my-zsh wget curl ag yarn bind
 
-    google-chrome chromium vlc epdfview steam konsole
+    elmPackages.elm
+
+    google-chrome chromium vlc epdfview steam konsole spotify
 
     cachix sqlite gparted ark home-manager exa
 
@@ -47,6 +49,8 @@ in
     cmake gnumake clang
     stack ghc stack2nix cabal-install cabal2nix
 
+    docker docker-compose
+
     (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
   ];
 
@@ -57,6 +61,7 @@ in
     corefonts
     font-awesome-ttf
     fira-code
+    fira-code-symbols
   ];
 
   # Enable the OpenSSH daemon.
@@ -87,8 +92,9 @@ in
         dmenu #application launcher most people use
         i3status # gives you the default i3 status bar
         i3lock #default i3 screen locker
-        i3blocks #if you are planning on using i3blocks over i3status
-        feh
+        hsetroot
+        dunst
+        rofi
         arandr
         pavucontrol
         breeze-gtk

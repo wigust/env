@@ -1,0 +1,7 @@
+{
+    "editor.fontLigatures": true,
+    "editor.fontFamily": "'Fira Code', 'monospace', monospace, 'Droid Sans Fallback'",
+    "files.autoSave": "afterDelay",
+    "workbench.iconTheme": "vscode-icons",
+    "editor.multiCursorModifier": "ctrlCmd"
+}
