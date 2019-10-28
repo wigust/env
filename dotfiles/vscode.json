@@ -3,5 +3,8 @@
     "editor.fontFamily": "'Fira Code', 'monospace', monospace, 'Droid Sans Fallback'",
     "files.autoSave": "afterDelay",
     "workbench.iconTheme": "vscode-icons",
-    "editor.multiCursorModifier": "ctrlCmd"
+    "editor.multiCursorModifier": "ctrlCmd",
+    "[elm]": {
+        "editor.defaultFormatter": "elmTooling.elm-ls-vscode"
+    }
 }

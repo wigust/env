@@ -30,8 +30,7 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
-     ;; Tools
+   '(;; Tools
      nginx
      docker
      debug
@@ -50,6 +49,7 @@ values."
      markdown
      emacs-lisp
      c-c++ cmake
+     python 
      ;; Frameworks
      phoenix
      ;; Completion and file browsing
@@ -80,6 +80,7 @@ values."
                                       doom-themes
                                       lsp-mode
                                       lsp-ui
+                                      cquery
                                       (lsp-haskell :location (recipe :fetcher github :repo "emacs-lsp/lsp-haskell"))
                                       )
    ;; A list of packages that cannot be updated.
@@ -94,11 +95,9 @@ values."
    ;; them if they become unused. `all' installs *all* packages supported by
    ;; Spacemacs and never uninstall them. (default is `used-only')
    dotspacemacs-install-packages 'used-only)
-
   (when (spacemacs/system-is-mac)
     (append dotspacemacs-configuration-layers
             '(osx)))
-  ;; TODO: https://github.com/tonsky/FiraCode/wiki/Emacs-instructions
   )
 
 (defun dotspacemacs/init ()
@@ -326,6 +325,12 @@ values."
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
    dotspacemacs-whitespace-cleanup nil
+   ;; Extra stuff
+   dotspacemacs-line-numbers t
+   evil-kill-on-visual-paste nil
+   dotspacemacs-configuration-layers '((c-c++ :variables
+                                              c-c++-backend 'lsp-cquery
+                                              c-c++-lsp-executable "/run/current-system/sw/bin/cquery"))
    ))
 
 (defun dotspacemacs/user-init ()
@@ -346,11 +351,9 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 (if (eq system-type 'darwin)
       (mac-auto-operator-composition-mode))
-(setq-default evil-kill-on-visual-paste nil)
 (setq lsp-haskell-process-path-hie "hie-wrapper")
 (require 'lsp-haskell)
 (add-hook 'haskell-mode-hook #'lsp)
-
 ;; Load secret configuration if the file is present
 (if (file-exists-p "~/.spacemacs.secret")
     (load "~/.spacemacs.secret")
@@ -428,7 +431,7 @@ This function is called at the very end of Spacemacs initialization."
  '(objed-cursor-color "#ff6c6b")
  '(package-selected-packages
    (quote
-    (helm-rtags helm-ctest google-c-style flycheck-rtags disaster cquery cpp-auto-include company-rtags rtags company-c-headers cmake-mode cmake-ide levenshtein clang-format ccls lsp-mode nginx-mode forge ghub closql emacsql-sqlite emacsql treepy tide typescript-mode tablist docker-tramp web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode yaml-mode company-shell smeargle orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mmm-mode markdown-toc markdown-mode magit-gitflow magit-popup htmlize helm-gitignore gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip evil-magit magit transient git-commit with-editor diff-hl auto-dictionary flycheck-haskell flycheck-elixir flycheck-elm company-go xterm-color shell-pop multi-term helm-company helm-c-yasnippet fuzzy eshell-z eshell-prompt-extras esh-help company-statistics company-cabal auto-yasnippet ac-ispell auto-complete all-the-icons memoize yarn-mode intero hlint-refactor hindent helm-hoogle haskell-snippets yasnippet company-ghci company-ghc ghc haskell-mode cmm-mode ob-elixir flycheck-mix flycheck-credo flycheck company elixir-mode doom-themes elm-mode reformatter alchemist docker-compose-mode dockerfile-mode docker ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
+    (yapfify stickyfunc-enhance pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements lsp-python-ms python live-py-mode importmagic epc ctable concurrent deferred helm-pydoc helm-gtags helm-cscope xcscope ggtags dap-mode bui tree-mode cython-mode counsel-gtags counsel swiper ivy company-anaconda blacken anaconda-mode pythonic lsp-mode nginx-mode forge ghub closql emacsql-sqlite emacsql treepy tide typescript-mode tablist docker-tramp web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode yaml-mode company-shell smeargle orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mmm-mode markdown-toc markdown-mode magit-gitflow magit-popup htmlize helm-gitignore gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip evil-magit magit transient git-commit with-editor diff-hl auto-dictionary flycheck-haskell flycheck-elixir flycheck-elm company-go xterm-color shell-pop multi-term helm-company helm-c-yasnippet fuzzy eshell-z eshell-prompt-extras esh-help company-statistics company-cabal auto-yasnippet ac-ispell auto-complete all-the-icons memoize yarn-mode intero hlint-refactor hindent helm-hoogle haskell-snippets yasnippet company-ghci company-ghc ghc haskell-mode cmm-mode ob-elixir flycheck-mix flycheck-credo flycheck company elixir-mode doom-themes elm-mode reformatter alchemist docker-compose-mode dockerfile-mode docker ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
  '(vc-annotate-background "#282c34")
  '(vc-annotate-color-map
    (list

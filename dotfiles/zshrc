@@ -33,3 +33,6 @@ alias wcat_sync_desktop='rsync -r --exclude="/.git" --filter="dir-merge,- .gitig
 alias wcat_sync_laptop='rsync -r --exclude="/.git" --filter="dir-merge,- .gitignore" ~/development/webCAT ben@192.168.86.235:/Users/ben/development'
 
 alias switch='sudo nixos-rebuild switch'
+alias iexm='iex -S mix'
+
+export EDITOR="emacs"
