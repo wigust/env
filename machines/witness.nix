@@ -16,64 +16,114 @@ in
       "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos"
     ];
   # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-  # Use the GRUB 2 boot loader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
-  # Define on which hard drive you want to install Grub.
-  boot.loader.grub.device = "/dev/nvme0n1"; # or "nodev" for efi only
+  nixpkgs.config = {
+    # allowBroken = true;
+    allowUnfree = true;
+  };
 
-  networking.hostName = "busc-nixos"; # Define your hostname.
-  networking.networkmanager.enable = true;
+  # Use the GRUB 2 boot loader.
+  boot.loader = {
+    grub.enable = true;
+    grub.version = 2;
+    # Define on which hard drive you want to install Grub.
+    grub.device = "/dev/nvme0n1"; # or "nodev" for efi only
+  };
 
   # Set the time zone.
   time.timeZone = "America/Detroit";
   
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
-    git oh-my-zsh wget curl ag yarn bind
+    # Utilities
+    git oh-my-zsh
+    wget curl
+    ispell
+    ranger ag exa
+    gparted ark
 
-    elmPackages.elm
+    # Node
+    yarn
 
-    google-chrome chromium vlc epdfview steam konsole spotify
+    # Elm
+    elmPackages.elm elmPackages.elm-format glibc
 
-    cachix sqlite gparted ark home-manager exa
+    # Internet & media
+    google-chrome chromium
+    vlc spotify
+    epdfview
+    steam
 
-    python3 pipenv python37Packages.virtualenv
+    # Terminal tools
+    konsole
 
-    emacs jetbrains.clion jetbrains.datagrip jetbrains.idea-ultimate vscode
+    # Nix tools
+    cachix home-manager
 
+    # Python
+    python3 python37Packages.poetry python37Packages.python-language-server python37Packages.yapf
+    sqlite
+
+    # IDEs and editors
+    emacs vscode
+    jetbrains.clion jetbrains.datagrip jetbrains.pycharm-professional jetbrains.idea-ultimate
+
+    # Java
     jetbrains.jdk bazel gradle
 
-    cmake gnumake clang
-    stack ghc stack2nix cabal-install cabal2nix
+    # C/C++
+    cmake gnumake clang cquery
 
-    docker docker-compose
-
+    # Haskell
+    stack ghc cabal-install
     (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
+
+    # Docker
+    docker-compose
+
+    # Elixir
+    elixir_1_8 inotify-tools
   ];
 
-  fonts.enableFontDir = true;
-  fonts.enableDefaultFonts = true;
-  fonts.enableCoreFonts = true;
-  fonts.fonts = with pkgs; [
-    corefonts
-    font-awesome-ttf
-    fira-code
-    fira-code-symbols
-  ];
+  fonts = {
+    enableFontDir = true;
+    enableDefaultFonts = true;
+    enableCoreFonts = true;
+    fonts = with pkgs; [
+      corefonts
+      font-awesome-ttf
+      fira-code
+      fira-code-symbols
+    ];
+  };
 
   # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-  networking.firewall.allowedTCPPorts = [ ];
-  networking.firewall.allowedUDPPorts = [ ];
+  services.openssh = {
+    enable = true;
+    passwordAuthentication = false;
+  };
+
+  services.syncthing = {
+    enable = true;
+    user = "ben";
+    dataDir = "/home/ben/.syncthing";
+  };
+
+  networking = {
+    hostName = "busc-nixos"; # Define your hostname.
+    networkmanager.enable = true;
+    firewall = {
+      allowedTCPPorts = [ 22 22000 ];
+      allowedUDPPorts = [ 21027 ];
+    };
+  };
 
   # Enable sound.
   sound.enable = true;
-  hardware.pulseaudio.enable = true;
-  hardware.opengl.driSupport32Bit = true;
-  hardware.pulseaudio.support32Bit = true;
+
+  hardware = {
+    pulseaudio.enable = true;
+    opengl.driSupport32Bit = true;
+    pulseaudio.support32Bit = true;
+  };
 
   # Enable the X11 windowing system.
   services.xserver = {
@@ -107,15 +157,18 @@ in
     extraGroups = [
       "wheel"
       "docker"
-    ]; # Enable ‘sudo’ for the user.
+    ];
     initialPassword = "1234";
+    openssh.authorizedKeys.keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDVF0rotg5vBTwhvQqNIJBh6AED9kaSW9lkzxxcnLhnoAPbXfRm59XGfxWIi8zKXeExWO3ftLhAJWpLCmNpYlUNCd0KJiUq3Q/Q5RZF5cQomqwj3toPISHE3JnjNAyzLFq+h/AbB/Rw28zdwUeH/yuCn6fChI66A+JA4/THwBbG0NCidAkP4Aby3vlBRGJAnjSCkPW7686qAeLHZydPwum/EQCQuWVAYqfVHGLa0GIhCmJeloW0qR2QmMRomgHPLmlJYMsY8H36/KHfJzNH6FjkGsaJX1ex3a84JGdG4r0k7ulae6ZoSx2c5EQ2jVGysuppDP/7RWfO2cB32n/0EtqJbJtqgb3dr7bGKmMt+Zh76J55rtRj+wXbMpwKyx0Vb/6dUtxys8z+K5uNrZIN7KWi8xhfIjLn5iFxb8GsPbIbt9VQHe1yFGw7HwcRNODCCx5zifDEAWUujOjXP4fhxrVzhPmlRbBqplwZi2+J44CwszIw3ledF6H2vLEppF0fq5COVlaEnvCr2zUZ/SneOLI78wnNhruy22XWKmJggs634HvLDk5JlSVKHZtFwCu+1LG+20fEZma2uHQApuh9hEpxkLvH1+wBaIN5HJCpuMoMktqM9rZFfFok3tlo7bDr+Wlfu9V4GqlKXa5lvbpEo74XHq3xxQIyJUAoV4xGfN2SqQ== ben@nixos" ];
   };
 
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
 
-  virtualisation.docker.enable = true;
-  virtualisation.docker.enableOnBoot = true;
+  virtualisation.docker = {
+    enable = true;
+    enableOnBoot = true;
+  };
 
   networking.extraHosts =
     ''
@@ -123,9 +176,5 @@ in
       192.168.86.235 laptop.busc
     '';
 
-  # This value determines the NixOS release with which your system is to be
-  # compatible, in order to avoid breaking some software such as database
-  # servers. You should change this only after NixOS release notes say you
-  # should.
-  system.stateVersion = "19.03"; # Did you read the comment?
+  system.stateVersion = "19.03";
 }

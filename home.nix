@@ -23,6 +23,12 @@ in
   xdg.configFile."i3/config".source ="${env}/dotfiles/i3/config";
   xdg.configFile."i3/desktop.sh".source ="${env}/dotfiles/i3/desktop.sh";
 
+  xdg.configFile."ranger/rifle.conf".source = "${env}/dotfiles/ranger/rifle.conf";
+  xdg.configFile."ranger/commands.py".source = "${env}/dotfiles/ranger/commands.py";
+  xdg.configFile."ranger/commands_full.py".source = "${env}/dotfiles/ranger/commands_full.py";
+  xdg.configFile."ranger/rc.conf".source = "${env}/dotfiles/ranger/rc.conf";
+  xdg.configFile."ranger/scope.sh".source = "${env}/dotfiles/ranger/scope.sh";
+
   xdg.configFile."nixpkgs/home.nix".source = "${env}/home.nix";
   xdg.configFile."Code/User/settings.json".source = "${env}/dotfiles/vscode.json";
 
@@ -37,7 +43,7 @@ in
       source = fetchGit {
        url = "https://github.com/syl20bnr/spacemacs";
        ref = "develop";
-       rev = "560b51c324957cf649c72d68f4c1aa1e6a540c30";
+       rev = "f7530767722cdbab46144a275f74f04786eb559c";
       };
       recursive = true;
     };

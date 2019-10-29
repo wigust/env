@@ -36,3 +36,6 @@ else
   export PATH="$HOME/.local/bin:$PATH"
   alias switch='sudo nixos-rebuild switch'
 fi
+
+alias iexm='iex -S mix'
+export EDITOR="emacs"
