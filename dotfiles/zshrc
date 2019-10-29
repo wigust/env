@@ -27,7 +27,12 @@ test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
 alias wcat_sync_desktop='rsync -r --exclude="/.git" --filter="dir-merge,- .gitignore" ~/development/webCAT ben@witness.busc.dev:/home/ben/development'
 alias wcat_sync_laptop='rsync -r --exclude="/.git" --filter="dir-merge,- .gitignore" ~/development/webCAT ben@192.168.86.235:/Users/ben/development'
 
-# Do OS specific things if [[ $OSTYPE == darwin* ]]; then plugins+=(osx) export
-NIX_PATH=nixpkgs=$NIX_PATH/nixpkgs . $HOME/.nix-profile/etc/profile.d/nix.sh
-else export PATH="$HOME/.local/bin:$PATH" alias switch='sudo nixos-rebuild
-switch' fi
+# Do OS specific things
+if [[ $OSTYPE == darwin* ]]; then
+  plugins+=(osx)
+  export NIX_PATH=nixpkgs=$NIX_PATH/nixpkgs
+  . $HOME/.nix-profile/etc/profile.d/nix.sh
+else
+  export PATH="$HOME/.local/bin:$PATH"
+  alias switch='sudo nixos-rebuild switch'
+fi
