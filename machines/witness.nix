@@ -6,6 +6,19 @@
 
 let
   all-hies = import (fetchTarball "https://github.com/infinisil/all-hies/tarball/master") {};
+  bitwig-studio3 = pkgs.bitwig-studio1.overrideAttrs (oldAttrs: rec {
+    name = "bitwig-studio-${version}";
+    version = "3.0.3";
+  
+    src = builtins.fetchurl {
+      url = "https://downloads.bitwig.com/stable/${version}/bitwig-studio-${version}.deb";
+      sha256 = "162l95imq2fb4blfkianlkymm690by9ri73xf9zigknqf0gacgsa";
+    };
+    
+    runtimeDependencies = [
+      pkgs.pulseaudio
+    ];
+  });
 in
 {
   imports =
@@ -13,11 +26,13 @@ in
       /etc/nixos/hardware-configuration.nix
       # Also include binary caches managed by cachix
       /etc/nixos/cachix.nix
+      # Includes
+      #./yubikey-gpg.nix
       "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos"
     ];
   # Allow unfree packages
   nixpkgs.config = {
-    # allowBroken = true;
+    allowBroken = true;
     allowUnfree = true;
   };
 
@@ -28,6 +43,8 @@ in
     # Define on which hard drive you want to install Grub.
     grub.device = "/dev/nvme0n1"; # or "nodev" for efi only
   };
+
+  # boot.extraModulePackages = with config.boot.kernelPackages; [ exfat-nofuse ];
 
   # Set the time zone.
   time.timeZone = "America/Detroit";
@@ -50,7 +67,8 @@ in
     google-chrome chromium
     vlc spotify
     epdfview
-    steam
+    (steam.override { extraPkgs = pkgs: [ pkgsi686Linux.libva ]; })
+    bitwig-studio3 jack2Full
 
     # Terminal tools
     konsole
@@ -58,8 +76,12 @@ in
     # Nix tools
     cachix home-manager
 
+    # GnuPG
+    gnupg
+
     # Python
-    python3 python37Packages.poetry python37Packages.python-language-server python37Packages.yapf
+    (python3.withPackages(ps: with ps; [ pip ]))
+    python3Packages.poetry python3Packages.python-language-server python3Packages.yapf
     sqlite
 
     # IDEs and editors
@@ -121,7 +143,13 @@ in
 
   hardware = {
     pulseaudio.enable = true;
-    opengl.driSupport32Bit = true;
+    opengl = {
+      driSupport32Bit = true;
+      enable = true;
+      extraPackages = with pkgs; [
+        libva
+      ];
+    };
     pulseaudio.support32Bit = true;
   };
 

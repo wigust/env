@@ -32,6 +32,8 @@ in
   xdg.configFile."nixpkgs/home.nix".source = "${env}/home.nix";
   xdg.configFile."Code/User/settings.json".source = "${env}/dotfiles/vscode.json";
 
+  "/etc/nixos/yubikey-gpg.nix".source = "${env}/yubikey-gpg.nix";
+
   home.packages = [fontAwesomePro];
 
   home.file = {
