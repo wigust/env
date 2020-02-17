@@ -30,12 +30,7 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(rust
-     ;; Tools
-     nginx
-     docker
-     debug
-     lsp
+   '(;; Tools
      ibuffer
      nixos
      ;; Languages & File types
@@ -45,45 +40,32 @@ values."
      (haskell :variables ;; Or optionally just haskell without the variables.
               haskell-completion-backend 'ghci
               haskell-process-type 'stack-ghci)
-     elixir
-     elm
+     ;; elixir
+     ;; elm
      markdown
-     emacs-lisp
-     c-c++ cmake
-     python 
-     ;; Frameworks
-     phoenix
+     python
+     purescript
      ;; Completion and file browsing
      helm
      auto-completion
+     spell-checking
+     syntax-checking
      ;; Source control
      git
      github
      version-control
      ;; Other fun stuff
-     org
-     emoji
-     slack
-     spotify
-     evernote
      unicode-fonts
      (shell :variables
              shell-default-height 30
              shell-default-position 'bottom)
-     spell-checking
-     syntax-checking
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(
-                                      doom-themes
-                                      lsp-mode
-                                      lsp-ui
-                                      cquery
-                                      (lsp-haskell :location (recipe :fetcher github :repo "emacs-lsp/lsp-haskell"))
-                                      )
+   dotspacemacs-additional-packages '(doom-themes
+                                      gnu-elpa-keyring-update)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -110,6 +92,8 @@ values."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
+
+  package-check-signature nil
    ;; If non nil ELPA repositories are contactedµ via HTTPS whenever it's
    ;; possible. Set it to nil if you have no way to use HTTPS in your
    ;; environment, otherwise it is strongly recommended to let it set to t.
@@ -161,8 +145,7 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(doom-one
-                         spacemacs-dark
-                         spacemacs-light)
+                         spacemacs-dark)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
@@ -341,6 +324,8 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+
+  
   )
 
 (defun dotspacemacs/user-config ()
@@ -451,6 +436,14 @@ This function is called at the very end of Spacemacs initialization."
    (quote
     (dap-mode bui tree-mode lsp-mode nginx-mode forge ghub closql emacsql-sqlite emacsql treepy tide typescript-mode tablist docker-tramp web-mode tagedit slim-mode scss-mode sass-mode pug-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode yaml-mode company-shell smeargle orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mmm-mode markdown-toc markdown-mode magit-gitflow magit-popup htmlize helm-gitignore gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip evil-magit magit transient git-commit with-editor diff-hl auto-dictionary flycheck-haskell flycheck-elixir flycheck-elm company-go xterm-color shell-pop multi-term helm-company helm-c-yasnippet fuzzy eshell-z eshell-prompt-extras esh-help company-statistics company-cabal auto-yasnippet ac-ispell auto-complete all-the-icons memoize yarn-mode intero hlint-refactor hindent helm-hoogle haskell-snippets yasnippet company-ghci company-ghc ghc haskell-mode cmm-mode ob-elixir flycheck-mix flycheck-credo flycheck company elixir-mode doom-themes elm-mode reformatter alchemist docker-compose-mode dockerfile-mode docker ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
  '(pdf-view-midnight-colors (quote ("#b2b2b2" . "#292b2e")))
+ '(safe-local-variable-values
+   (quote
+    ((haskell-process-use-ghci . t)
+     (haskell-indent-spaces . 4)
+     (javascript-backend . tern)
+     (javascript-backend . lsp)
+     (elixir-enable-compilation-checking . t)
+     (elixir-enable-compilation-checking))))
  '(vc-annotate-background "#282c34")
  '(vc-annotate-color-map
    (list

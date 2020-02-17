@@ -2,23 +2,24 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
-
+{ config, pkgs, lib, ... }:
+with lib;
 let
-  all-hies = import (fetchTarball "https://github.com/infinisil/all-hies/tarball/master") {};
-  bitwig-studio3 = pkgs.bitwig-studio1.overrideAttrs (oldAttrs: rec {
-    name = "bitwig-studio-${version}";
-    version = "3.0.3";
-  
-    src = builtins.fetchurl {
-      url = "https://downloads.bitwig.com/stable/${version}/bitwig-studio-${version}.deb";
-      sha256 = "162l95imq2fb4blfkianlkymm690by9ri73xf9zigknqf0gacgsa";
-    };
-    
-    runtimeDependencies = [
-      pkgs.pulseaudio
-    ];
-  });
+  unstable = import (builtins.fetchGit {
+  name = "nixpkgs-unstable-2020-01-13";
+  url = "https://github.com/NixOS/nixpkgs-channels";
+  ref = "nixos-unstable";
+  # `git ls-remote https://github.com/nixos/nixpkgs-channels nixos-unstable`
+  rev = "c438ce12a858f24c1a2479213eaab751da45fa50";
+}) {};
+  easyPS = import (pkgs.fetchFromGitHub {
+    owner = "justinwoo";
+    repo = "easy-purescript-nix";
+    rev = "14e7d85431e9f9838d7107d18cb79c7fa534f54e";
+    sha256 = "0lmkppidmhnayv0919990ifdd61f9d23dzjzr8amz7hjgc74yxs0";
+  }) {
+    inherit pkgs;
+  };
 in
 {
   imports =
@@ -26,14 +27,18 @@ in
       /etc/nixos/hardware-configuration.nix
       # Also include binary caches managed by cachix
       /etc/nixos/cachix.nix
+      <home-manager/nixos>
       # Includes
       #./yubikey-gpg.nix
-      "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/master.tar.gz}/nixos"
+      (builtins.fetchTarball {
+       url = "https://github.com/msteen/nixos-vsliveshare/archive/e6ea0b04de290ade028d80d20625a58a3603b8d7.tar.gz";
+       sha256 = "12riba9dlchk0cvch2biqnikpbq4vs22gls82pr45c3vzc3vmwq9";
+      })
     ];
   # Allow unfree packages
   nixpkgs.config = {
     allowBroken = true;
-    allowUnfree = true;
+    allowUnfree = true;  
   };
 
   # Use the GRUB 2 boot loader.
@@ -48,27 +53,51 @@ in
 
   # Set the time zone.
   time.timeZone = "America/Detroit";
-  
-  environment.systemPackages = with pkgs; [
+
+  services.udev.packages = with pkgs; [
+    yubikey-personalization
+  ];
+
+
+  services.lorri.enable = true;
+
+  programs.ssh.startAgent = false;
+
+  services.pcscd.enable = true;
+  environment.shellInit = ''
+    gpg-connect-agent /bye
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+  '';
+
+  environment.systemPackages = with pkgs; with easyPS; [
     # Utilities
     git oh-my-zsh
     wget curl
     ispell
     ranger ag exa
     gparted ark
+    obs-studio
+    direnv
+    postgresql_11
+    
+    inkscape
+    zoom-us
+
+    thunderbird
+
+    gitkraken gitAndTools.git-fame
 
     # Node
-    yarn
+    nodejs yarn
 
     # Elm
     elmPackages.elm elmPackages.elm-format glibc
 
     # Internet & media
-    google-chrome chromium
+    google-chrome chromium 
     vlc spotify
     epdfview
-    (steam.override { extraPkgs = pkgs: [ pkgsi686Linux.libva ]; })
-    bitwig-studio3 jack2Full
+    (steam.override { extraPkgs = pkgs: [ pkgsi686Linux.libva ]; }) discord
 
     # Terminal tools
     konsole
@@ -77,12 +106,12 @@ in
     cachix home-manager
 
     # GnuPG
-    gnupg
+    gnupg yubikey-personalization
 
     # Python
-    (python3.withPackages(ps: with ps; [ pip ]))
-    python3Packages.poetry python3Packages.python-language-server python3Packages.yapf
-    sqlite
+    (python38Full.withPackages(ps: with ps; [ setuptools pip tkinter virtualenv ]))
+    sqlite nix-index
+    libxslt.dev libxml2.dev libjpeg.dev openblasCompat liblapack
 
     # IDEs and editors
     emacs vscode
@@ -92,18 +121,31 @@ in
     jetbrains.jdk bazel gradle
 
     # C/C++
-    cmake gnumake clang cquery
+    cmake gnumake clang cquery gcc
 
     # Haskell
     stack ghc cabal-install
-    (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
 
     # Docker
-    docker-compose
+    docker-compose kompose
 
-    # Elixir
-    elixir_1_8 inotify-tools
+    # Purescript
+    spago purs pscid
   ];
+
+  services.vsliveshare = {
+    enable = true;
+    enableWritableWorkaround = true;
+    enableDiagnosticsWorkaround = true;
+    extensionsDir = "/home/ben/.vscode/extensions";
+  };
+
+  services.udev.extraRules = ''
+     # Rule for the Ergodox EZ Original / Shine / Glow
+     SUBSYSTEM=="usb", ATTR{idVendor}=="feed", ATTR{idProduct}=="1307", GROUP="plugdev"
+     # Rule for the Planck EZ Standard / Glow
+     SUBSYSTEM=="usb", ATTR{idVendor}=="feed", ATTR{idProduct}=="6060", GROUP="plugdev"
+  '';
 
   fonts = {
     enableFontDir = true;
@@ -114,6 +156,7 @@ in
       font-awesome-ttf
       fira-code
       fira-code-symbols
+      unstable.jetbrains-mono
     ];
   };
 
@@ -130,11 +173,10 @@ in
   };
 
   networking = {
-    hostName = "busc-nixos"; # Define your hostname.
-    networkmanager.enable = true;
+    hostName = "busc-nixos";
     firewall = {
       allowedTCPPorts = [ 22 22000 ];
-      allowedUDPPorts = [ 21027 ];
+      allowedUDPPorts = [ 22 21027 ];
     };
   };
 
@@ -178,25 +220,30 @@ in
         breeze-gtk
      ];
     };
-
   };
+
   users.users.ben = {
     isNormalUser = true;
     extraGroups = [
       "wheel"
+      "plugdev"
+      "networkmanager"
       "docker"
     ];
     initialPassword = "1234";
-    openssh.authorizedKeys.keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDVF0rotg5vBTwhvQqNIJBh6AED9kaSW9lkzxxcnLhnoAPbXfRm59XGfxWIi8zKXeExWO3ftLhAJWpLCmNpYlUNCd0KJiUq3Q/Q5RZF5cQomqwj3toPISHE3JnjNAyzLFq+h/AbB/Rw28zdwUeH/yuCn6fChI66A+JA4/THwBbG0NCidAkP4Aby3vlBRGJAnjSCkPW7686qAeLHZydPwum/EQCQuWVAYqfVHGLa0GIhCmJeloW0qR2QmMRomgHPLmlJYMsY8H36/KHfJzNH6FjkGsaJX1ex3a84JGdG4r0k7ulae6ZoSx2c5EQ2jVGysuppDP/7RWfO2cB32n/0EtqJbJtqgb3dr7bGKmMt+Zh76J55rtRj+wXbMpwKyx0Vb/6dUtxys8z+K5uNrZIN7KWi8xhfIjLn5iFxb8GsPbIbt9VQHe1yFGw7HwcRNODCCx5zifDEAWUujOjXP4fhxrVzhPmlRbBqplwZi2+J44CwszIw3ledF6H2vLEppF0fq5COVlaEnvCr2zUZ/SneOLI78wnNhruy22XWKmJggs634HvLDk5JlSVKHZtFwCu+1LG+20fEZma2uHQApuh9hEpxkLvH1+wBaIN5HJCpuMoMktqM9rZFfFok3tlo7bDr+Wlfu9V4GqlKXa5lvbpEo74XHq3xxQIyJUAoV4xGfN2SqQ== ben@nixos" ];
+    openssh.authorizedKeys.keyFiles = [ 
+      "/home/ben/.ssh/ben@busc.pub"
+      "/home/ben/.ssh/id_rsa.pub"
+    ];
   };
+  home-manager.users.ben = import ../home.nix;
+
+  virtualisation.docker.enable = true;
 
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
 
-  virtualisation.docker = {
-    enable = true;
-    enableOnBoot = true;
-  };
+  networking.networkmanager.enable = true;
 
   networking.extraHosts =
     ''
@@ -204,5 +251,5 @@ in
       192.168.86.235 laptop.busc
     '';
 
-  system.stateVersion = "19.03";
+  system.stateVersion = "19.09";
 }

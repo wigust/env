@@ -6,5 +6,6 @@
     "editor.multiCursorModifier": "ctrlCmd",
     "[elm]": {
         "editor.defaultFormatter": "elmTooling.elm-ls-vscode"
-    }
+    },
+    "git.autofetch": true
 }

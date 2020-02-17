@@ -19,7 +19,7 @@ in
 {
   # Dotfiles and such
   xdg.configFile."i3status/config".source = "${env}/dotfiles/i3/i3status.conf";
-  xdg.configFile."dunst/dunstrc".source = "${env}/dotfiles/dunstrc";
+  xdg.configFile."dunst/dunstrc".source = "${env}/dotfiles/dunst/dunstrc";
   xdg.configFile."i3/config".source ="${env}/dotfiles/i3/config";
   xdg.configFile."i3/desktop.sh".source ="${env}/dotfiles/i3/desktop.sh";
 
@@ -32,7 +32,10 @@ in
   xdg.configFile."nixpkgs/home.nix".source = "${env}/home.nix";
   xdg.configFile."Code/User/settings.json".source = "${env}/dotfiles/vscode.json";
 
-  "/etc/nixos/yubikey-gpg.nix".source = "${env}/yubikey-gpg.nix";
+  services.gpg-agent = {
+    enable = true;
+    enableSshSupport = true;
+  };
 
   home.packages = [fontAwesomePro];
 
@@ -40,12 +43,12 @@ in
     ".spacemacs".source = "${env}/dotfiles/spacemacs";
     ".zshrc".source = "${env}/dotfiles/zshrc";
     ".gitconfig".source = "${env}/dotfiles/gitconfig";
-    
+    ".ssh/config".source = "${env}/dotfiles/ssh/config";
     ".emacs.d" = {
       source = fetchGit {
        url = "https://github.com/syl20bnr/spacemacs";
        ref = "develop";
-       rev = "f7530767722cdbab46144a275f74f04786eb559c";
+       rev = "8fcc9d849044dca6e69ff3f7bda89f82abf848b7";
       };
       recursive = true;
     };
