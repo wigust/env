@@ -2,181 +2,182 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, stdenv, ... }:
 with lib;
-let
-  unstable = import (builtins.fetchGit {
-  name = "nixpkgs-unstable-2020-01-13";
-  url = "https://github.com/NixOS/nixpkgs-channels";
-  ref = "nixos-unstable";
-  # `git ls-remote https://github.com/nixos/nixpkgs-channels nixos-unstable`
-  rev = "c438ce12a858f24c1a2479213eaab751da45fa50";
-}) {};
-  easyPS = import (pkgs.fetchFromGitHub {
-    owner = "justinwoo";
-    repo = "easy-purescript-nix";
-    rev = "14e7d85431e9f9838d7107d18cb79c7fa534f54e";
-    sha256 = "0lmkppidmhnayv0919990ifdd61f9d23dzjzr8amz7hjgc74yxs0";
-  }) {
-    inherit pkgs;
-  };
-in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      /etc/nixos/hardware-configuration.nix
-      # Also include binary caches managed by cachix
-      /etc/nixos/cachix.nix
-      <home-manager/nixos>
-      # Includes
-      #./yubikey-gpg.nix
-      (builtins.fetchTarball {
-       url = "https://github.com/msteen/nixos-vsliveshare/archive/e6ea0b04de290ade028d80d20625a58a3603b8d7.tar.gz";
-       sha256 = "12riba9dlchk0cvch2biqnikpbq4vs22gls82pr45c3vzc3vmwq9";
-      })
-    ];
-  # Allow unfree packages
-  nixpkgs.config = {
-    allowBroken = true;
-    allowUnfree = true;  
+  imports = [
+    # Include the results of the hardware scan.
+    /etc/nixos/hardware-configuration.nix
+    # Pin the 20.03 home-manager release instead of using channels
+    (import (fetchTarball
+      "https://github.com/rycee/home-manager/archive/release-20.03.tar.gz")
+      { }).nixos
+  ] ++ optional (builtins.pathExists "/etc/nixos/cachix.nix") /etc/nixos/cachix.nix;
+
+  nixpkgs = {
+
+    overlays = [
+      (import ../overlays/ormolu.nix)
+      (import ../overlays/chromium.nix)
+      (import ../overlays/steam.nix)  ];
+
+    config = {
+      # Allow un-free packages
+      allowUnfree = true;
+      chromium = {
+        enableWideVine = true;
+      };
+    };
   };
 
-  # Use the GRUB 2 boot loader.
-  boot.loader = {
-    grub.enable = true;
-    grub.version = 2;
-    # Define on which hard drive you want to install Grub.
-    grub.device = "/dev/nvme0n1"; # or "nodev" for efi only
+  boot = {
+    loader = {
+      grub.enable = true;
+      grub.version = 2;
+      # Define on which hard drive you want to install Grub.
+      grub.device = "/dev/nvme0n1"; # or "nodev" for efi only
+    };
+    extraModulePackages = [ config.boot.kernelPackages.exfat-nofuse ];
+    kernelModules = [ "kvm-amd" "kvm-intel" ];
   };
 
-  # boot.extraModulePackages = with config.boot.kernelPackages; [ exfat-nofuse ];
+  virtualisation = {
+    libvirtd.enable = true;
+    docker.enable = true;
+  };
 
   # Set the time zone.
   time.timeZone = "America/Detroit";
 
-  services.udev.packages = with pkgs; [
-    yubikey-personalization
-  ];
-
-
-  services.lorri.enable = true;
-
-  programs.ssh.startAgent = false;
-
-  services.pcscd.enable = true;
-  environment.shellInit = ''
-    gpg-connect-agent /bye
-    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-  '';
-
-  environment.systemPackages = with pkgs; with easyPS; [
+  environment.systemPackages = with pkgs; [
     # Utilities
-    git oh-my-zsh
-    wget curl
+    git
+    oh-my-zsh
+    wget
+    curl
     ispell
-    ranger ag exa
-    gparted ark
-    obs-studio
+    ag
+    exa
+    gparted
+    ark
     direnv
-    postgresql_11
-    
-    inkscape
-    zoom-us
-
-    thunderbird
-
-    gitkraken gitAndTools.git-fame
 
     # Node
-    nodejs yarn
-
-    # Elm
-    elmPackages.elm elmPackages.elm-format glibc
+    nodejs-12_x
+    yarn
 
     # Internet & media
-    google-chrome chromium 
-    vlc spotify
+    google-chrome chromium
+    vlc
+    spotify
     epdfview
-    (steam.override { extraPkgs = pkgs: [ pkgsi686Linux.libva ]; }) discord
+    nomacs
+    libreoffice
 
     # Terminal tools
-    konsole
+    alacritty
 
-    # Nix tools
-    cachix home-manager
-
-    # GnuPG
-    gnupg yubikey-personalization
+    steam discord
 
     # Python
-    (python38Full.withPackages(ps: with ps; [ setuptools pip tkinter virtualenv ]))
-    sqlite nix-index
-    libxslt.dev libxml2.dev libjpeg.dev openblasCompat liblapack
+    (python38Full.withPackages
+      (ps: with ps; [ setuptools pip virtualenv ]))
+    python38Packages.poetry
+    python3Packages.black
+    python3Packages.python-language-server
 
     # IDEs and editors
-    emacs vscode
-    jetbrains.clion jetbrains.datagrip jetbrains.pycharm-professional jetbrains.idea-ultimate
-
-    # Java
-    jetbrains.jdk bazel gradle
-
-    # C/C++
-    cmake gnumake clang cquery gcc
+    emacs
 
     # Haskell
-    stack ghc cabal-install
+    stack
+    ghc
+    cabal-install
+    (import (builtins.fetchTarball
+      "https://github.com/cachix/ghcide-nix/tarball/master") { }).ghcide-ghc865
+    ormolu
 
     # Docker
-    docker-compose kompose
+    docker-compose docker-machine
 
-    # Purescript
-    spago purs pscid
+    # Git
+    gitAndTools.git-fame
+
+    # Nix tools
+    cachix
+    nixops
+    nixfmt
+    nixos-generators
+
+    # Unholy, but pin to nixpkgs version so it doesn't get rebuilt all the time
+    (wrapCC (gcc9.cc.override { langFortran = true; }))
+
   ];
-
-  services.vsliveshare = {
-    enable = true;
-    enableWritableWorkaround = true;
-    enableDiagnosticsWorkaround = true;
-    extensionsDir = "/home/ben/.vscode/extensions";
-  };
-
-  services.udev.extraRules = ''
-     # Rule for the Ergodox EZ Original / Shine / Glow
-     SUBSYSTEM=="usb", ATTR{idVendor}=="feed", ATTR{idProduct}=="1307", GROUP="plugdev"
-     # Rule for the Planck EZ Standard / Glow
-     SUBSYSTEM=="usb", ATTR{idVendor}=="feed", ATTR{idProduct}=="6060", GROUP="plugdev"
-  '';
 
   fonts = {
     enableFontDir = true;
     enableDefaultFonts = true;
-    enableCoreFonts = true;
     fonts = with pkgs; [
       corefonts
       font-awesome-ttf
       fira-code
       fira-code-symbols
-      unstable.jetbrains-mono
+      jetbrains-mono
+      siji
+      noto-fonts
     ];
   };
 
-  # Enable the OpenSSH daemon.
-  services.openssh = {
-    enable = true;
-    passwordAuthentication = false;
-  };
+  services = {
+    udev.extraRules = ''
+                    # Rule for the Ergodox EZ Original / Shine / Glow
+                    SUBSYSTEM=="usb", ATTR{idVendor}=="feed", ATTR{idProduct}=="1307", GROUP="plugdev"
+                    '';
+    # Enable the OpenSSH daemon.
+    openssh = {
+      enable = true;
+      passwordAuthentication = false;
+    };
+    syncthing = {
+      enable = true;
+      user = "ben";
+      dataDir = "${config.users.users.ben.home}/.syncthing";
+    };
+    lorri.enable = true;
 
-  services.syncthing = {
-    enable = true;
-    user = "ben";
-    dataDir = "/home/ben/.syncthing";
+    # Enable the X11 windowing system.
+    xserver = {
+      enable = true;
+      layout = "us";
+      desktopManager.xterm.enable = false;
+      displayManager.lightdm.enable = true;
+      displayManager.defaultSession = "none+xmonad";
+      videoDrivers = [ "nvidia" ];
+
+      windowManager.xmonad = {
+        enable = true;
+        extraPackages = with pkgs;( hs: [
+          dmenu
+          hs.xmobar
+          nitrogen
+          dunst
+          rofi
+          arandr
+          pavucontrol
+          breeze-gtk
+        ]);
+        enableContribAndExtras = true;
+        config = ../dotfiles/xmonad/config.hs;
+      };
+    };
   };
 
   networking = {
-    hostName = "busc-nixos";
+    hostName = "witness";
+    networkmanager.enable = true;
     firewall = {
-      allowedTCPPorts = [ 22 22000 ];
-      allowedUDPPorts = [ 22 21027 ];
+      allowedTCPPorts = [ 22 19001 19002 22000 ];
+      allowedUDPPorts = [ 22 19001 19002 21027 ];
     };
   };
 
@@ -184,72 +185,38 @@ in
   sound.enable = true;
 
   hardware = {
-    pulseaudio.enable = true;
     opengl = {
+      enable = true;
       driSupport32Bit = true;
+      extraPackages = with pkgs; [ libva ];
+    };
+    pulseaudio = {
       enable = true;
-      extraPackages = with pkgs; [
-        libva
-      ];
+      support32Bit = true;
     };
-    pulseaudio.support32Bit = true;
   };
+  users = {
+    defaultUserShell = pkgs.zsh;
 
-  # Enable the X11 windowing system.
-  services.xserver = {
-    enable = true;
-    layout = "us";
-    desktopManager = {
-      default = "none";
-      xterm.enable = false;
-    };
-
-    videoDrivers = [ "nvidia" ];
-
-    windowManager.i3 = {
-      enable = true;
-      extraPackages = with pkgs; [
-        dmenu #application launcher most people use
-        i3status # gives you the default i3 status bar
-        i3lock #default i3 screen locker
-        hsetroot
-        dunst
-        rofi
-        arandr
-        pavucontrol
-        breeze-gtk
-     ];
+    users.ben = rec {
+      isNormalUser = true;
+      extraGroups = [ "wheel" "plugdev" "networkmanager" "docker" "libvirtd" ];
+      initialPassword = "1234";
+      home = "/home/ben";
+      openssh.authorizedKeys.keyFiles =
+        [ "${home}/.ssh/ben@busc.pub" "${home}/.ssh/id_rsa.pub" ];
     };
   };
 
-  users.users.ben = {
-    isNormalUser = true;
-    extraGroups = [
-      "wheel"
-      "plugdev"
-      "networkmanager"
-      "docker"
-    ];
-    initialPassword = "1234";
-    openssh.authorizedKeys.keyFiles = [ 
-      "/home/ben/.ssh/ben@busc.pub"
-      "/home/ben/.ssh/id_rsa.pub"
-    ];
+  home-manager.users.ben = import ../home.nix {
+    inherit pkgs;
+    inherit (users.users.ben) home;
   };
-  home-manager.users.ben = import ../home.nix;
 
-  virtualisation.docker.enable = true;
+  programs = {
+    ssh = { startAgent = true; };
+    zsh.enable = true;
+  };
 
-  users.defaultUserShell = pkgs.zsh;
-  programs.zsh.enable = true;
-
-  networking.networkmanager.enable = true;
-
-  networking.extraHosts =
-    ''
-      192.168.86.38 desktop.busc
-      192.168.86.235 laptop.busc
-    '';
-
-  system.stateVersion = "19.09";
+  system.stateVersion = "20.03";
 }

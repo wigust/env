@@ -1,56 +1,25 @@
-{ pkgs, ... }:
-with import <nixpkgs> {};
+{ pkgs, home, ... }:
+with pkgs;
 with builtins;
 with lib;
-let
-  env = "/home/ben/env";
-  fontAwesomePro = stdenv.mkDerivation {
-    name = "FontAwesome-Pro";
-    src = fetchGit {
-      name = "font-awesome-pro";
-      url = "git@github.com:FortAwesome/Font-Awesome-Pro.git";
-      rev = "ad98aa363b555d05ae380fcfa38ee7f2fe7013b4";
-    };
-    installPhase = ''
-       install -m444 -Dt $out/share/fonts/opentype {fonts,otfs}/*.otf
-    '';
-  };
-in
 {
   # Dotfiles and such
-  xdg.configFile."i3status/config".source = "${env}/dotfiles/i3/i3status.conf";
-  xdg.configFile."dunst/dunstrc".source = "${env}/dotfiles/dunst/dunstrc";
-  xdg.configFile."i3/config".source ="${env}/dotfiles/i3/config";
-  xdg.configFile."i3/desktop.sh".source ="${env}/dotfiles/i3/desktop.sh";
+  xdg.configFile."dunst/dunstrc".source = ./dotfiles/dunst/dunstrc;
 
-  xdg.configFile."ranger/rifle.conf".source = "${env}/dotfiles/ranger/rifle.conf";
-  xdg.configFile."ranger/commands.py".source = "${env}/dotfiles/ranger/commands.py";
-  xdg.configFile."ranger/commands_full.py".source = "${env}/dotfiles/ranger/commands_full.py";
-  xdg.configFile."ranger/rc.conf".source = "${env}/dotfiles/ranger/rc.conf";
-  xdg.configFile."ranger/scope.sh".source = "${env}/dotfiles/ranger/scope.sh";
-
-  xdg.configFile."nixpkgs/home.nix".source = "${env}/home.nix";
-  xdg.configFile."Code/User/settings.json".source = "${env}/dotfiles/vscode.json";
-
-  services.gpg-agent = {
-    enable = true;
-    enableSshSupport = true;
-  };
-
-  home.packages = [fontAwesomePro];
-
-  home.file = {
-    ".spacemacs".source = "${env}/dotfiles/spacemacs";
-    ".zshrc".source = "${env}/dotfiles/zshrc";
-    ".gitconfig".source = "${env}/dotfiles/gitconfig";
-    ".ssh/config".source = "${env}/dotfiles/ssh/config";
+   home.file = {
     ".emacs.d" = {
-      source = fetchGit {
-       url = "https://github.com/syl20bnr/spacemacs";
-       ref = "develop";
-       rev = "8fcc9d849044dca6e69ff3f7bda89f82abf848b7";
+      source = pkgs.fetchFromGitHub {
+        owner = "syl20bnr";
+        repo = "spacemacs";
+        rev = "d0f5477c323ef6600e29d22b75d876c49916b3f4";
+        sha256 = "0xara6g0fkqxp1dnwlan1kkgiwfrzkpnyf2rn44m9n8d8h72nh2n";
       };
       recursive = true;
     };
+    ".spacemacs".source = ./dotfiles/.spacemacs;
+    ".zshrc".source = ./dotfiles/.zshrc;
+    ".gitconfig".source = ./dotfiles/.gitconfig;
+    ".ssh/config".source = ./dotfiles/ssh/config;
+    ".xmonad/xmobar.hs".source = ./dotfiles/xmonad/xmobar.hs;
   };
 }
