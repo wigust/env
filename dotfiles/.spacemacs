@@ -7,51 +7,59 @@
 You should not put any user code in this function besides modifying the variable
 values."
   (setq-default
-   ;; Base distribution to use. This is a layer contained in the directory
-   ;; `+distribution'. For now available distributions are `spacemacs-base'
-   ;; or `spacemacs'. (default 'spacemacs)
    dotspacemacs-distribution 'spacemacs
-   ;; Lazy installation of layers (i.e. layers are installed only when a file
-   ;; with a supported type is opened). Possible values are `all', `unused'
-   ;; and `nil'. `unused' will lazy install only unused layers (i.e. layers
-   ;; not listed in variable `dotspacemacs-configuration-layers'), `all' will
-   ;; lazy install any layer that support lazy installation even the layers
-   ;; listed in `dotspacemacs-configuration-layers'. `nil' disable the lazy
-   ;; installation feature and you have to explicitly list a layer in the
-   ;; variable `dotspacemacs-configuration-layers' to install it.
-   ;; (default 'unused)
    dotspacemacs-enable-lazy-installation 'unused
-   ;; If non-nil then Spacemacs will ask for confirmation before installing
-   ;; a layer lazily. (default t)
-   dotspacemacs-ask-for-lazy-installation t
-   ;; If non-nil layers with lazy install support are lazy installed.
-   ;; List of additional paths where to look for configuration layers.
-   ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
+   ;; List of additional paths where to look for configuration layers (i.e. `~/.mycontribs/')
    dotspacemacs-configuration-layer-path '()
-   ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(;; Tools
-     ibuffer
+   '(;; Fundamentals
+     (ibuffer :variables ibuffer-group-buffers-by 'projects)
+     ;; (templates :variables templates-private-directory "~/.spacemacs.d/templates")
+     (treemacs :variables treemacs-use-git-mode 'deferred)
+     copy-as-format
+     dap
+     ;; OS
      nixos
+     ;; Tools
+     cmake
+     docker
+     nginx
+     prodigy 
      org
      ;; LSP
      lsp
      ;; Languages & File types
+     (python
+      :variables
+      python-backend 'lsp
+      python-lsp-server 'pyls)
+     (haskell
+      :variables
+      haskell-completion-backend 'ghci)
+     (c-c++
+      :variables
+      c-c++-backend 'lsp-clangd
+      c-c++-enable-google-style t
+      c-c++-enable-google-newline t)
+     (purescript :variables node-add-modules-path t)
+     sql
+     elm
+     emacs-lisp
      html
      javascript
-     yaml
-     (haskell :variables haskell-completion-backend 'lsp)
      markdown
-     (python :variables python-backend 'lsp)
-     (c-c++ :variables c-c++-backend 'lsp-clangd)
-     rust ;; TOML
-     ;; Completion and file browsing
-     helm
-     auto-completion
-     spell-checking
+     yaml
+     rust
+     ;; Completion
+     (helm :variables helm-enable-auto-resize t)
+     (auto-completion :variables auto-completion-enable-sort-by-usage t)
+     (spell-checking :variables enable-flyspell-auto-completion t)
      syntax-checking
      ;; Source control
-     git
+     (git
+      :variables
+      magit-repository-directories '("~/Development/" . 4)
+      )
      github
      version-control
      ;; Other fun stuff
@@ -59,12 +67,13 @@ values."
      (shell :variables
              shell-default-height 30
              shell-default-position 'bottom)
-     )
+     emoji)
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(doom-themes
+                                      company-lsp
                                       gnu-elpa-keyring-update)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -325,8 +334,6 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-
-  
   )
 
 (defun dotspacemacs/user-config ()
@@ -336,6 +343,7 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
 (defun fira-code-mode--make-alist (list)
   "Generate prettify-symbols alist from LIST."
   (let ((idx -1))
@@ -398,6 +406,7 @@ you should place your code here."
 (if (eq system-type 'darwin)
     (mac-auto-operator-composition-mode)
   (add-hook 'prog-mode-hook 'fira-code-mode))
+
 
 
 ;; Load secret configuration if the file is present
