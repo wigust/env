@@ -25,13 +25,15 @@ values."
      docker
      nginx
      prodigy
-     org
+     (org :variables org-projectile-file "TODOS.org")
      ;; LSP
      lsp
      ;; Languages & File types
      (python
       :variables
       python-backend 'lsp
+      python-formatter 'black
+      python-test-runner 'pytest
       python-lsp-server 'pyls)
      (haskell
       :variables
@@ -115,7 +117,7 @@ values."
                          doom-vibrant
                          spacemacs-dark)
    dotspacemacs-colorize-cursor-according-to-state t
-   dotspacemacs-default-font '("Fira Code"
+   dotspacemacs-default-font '("JetBrains Mono"
                                :size 12
                                :weight normal
                                :width normal
