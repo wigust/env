@@ -39,6 +39,8 @@ if [[ $OSTYPE == darwin* ]]; then
   . /etc/static/zshrc
 else
   alias switch='sudo nixos-rebuild switch --upgrade'
+  # Fix for Java applets - https://wiki.haskell.org/Xmonad/Frequently_asked_questions#Problems_with_Java_applications.2C_Applet_java_console
+  export _JAVA_AWT_WM_NONREPARENTING=1
   source ~/.nix-profile/etc/profile.d/hm-session-vars.sh
 fi
 

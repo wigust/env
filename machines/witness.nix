@@ -3,8 +3,7 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, lib, stdenv, ... }:
-with lib;
-{
+with lib; {
   imports = [
     # Include the results of the hardware scan.
     /etc/nixos/hardware-configuration.nix
@@ -12,21 +11,25 @@ with lib;
     (import (fetchTarball
       "https://github.com/rycee/home-manager/archive/release-20.03.tar.gz")
       { }).nixos
-  ] ++ optional (builtins.pathExists "/etc/nixos/cachix.nix") /etc/nixos/cachix.nix;
 
+    # Cachix
+    ../cachix.nix
+  ];
+  nix.trustedUsers = [ "root" "ben" ];
   nixpkgs = {
 
     overlays = [
       (import ../overlays/ormolu.nix)
       (import ../overlays/chromium.nix)
-      (import ../overlays/steam.nix)  ];
+      (import ../overlays/summoner.nix)
+      (import ../overlays/steam.nix)
+    ];
 
     config = {
       # Allow un-free packages
       allowUnfree = true;
-      chromium = {
-        enableWideVine = true;
-      };
+      allowBroken = true;
+      chromium = { enableWideVine = true; };
     };
   };
 
@@ -49,70 +52,106 @@ with lib;
   # Set the time zone.
   time.timeZone = "America/Detroit";
 
-  environment.systemPackages = with pkgs; [
-    # Utilities
-    git
-    oh-my-zsh
-    wget
-    curl
-    ispell
-    ag
-    exa
-    gparted
-    ark
-    direnv
+  environment = {
+    variables = { "_JAVA_AWT_WM_NONREPARENTING" = "1"; };
+    systemPackages = with pkgs; [
+      # Utilities
+      git
+      oh-my-zsh
+      wget
+      curl
+      ispell
+      ag
+      exa
+      gparted
+      ark
+      direnv
+      gnumake
+      htop
+      xclip
+      pandoc
+      killall
 
-    # Node
-    nodejs-12_x
-    yarn
+      # Terminal
+      alacritty
+      hyper
 
-    # Internet & media
-    google-chrome chromium
-    vlc
-    spotify
-    epdfview
-    nomacs
-    libreoffice
+      # Node
+      nodejs-12_x
+      yarn
 
-    # Terminal tools
-    alacritty
+      # Internet & media
+      google-chrome
+      chromium
+      vlc
+      spotify
+      epdfview
+      nomacs
+      libreoffice
 
-    steam discord
+      # Games
+      steam
 
-    # Python
-    (python38Full.withPackages
-      (ps: with ps; [ setuptools pip virtualenv ]))
-    python38Packages.poetry
-    python3Packages.black
-    python3Packages.python-language-server
+      # Chat apps
+      discord
+      slack
+      mattermost
 
-    # IDEs and editors
-    emacs
+      # Python
+      (python38Full.withPackages (ps: with ps; [ setuptools pip virtualenv ]))
+      python38Packages.poetry
+      python3Packages.black
+      python3Packages.python-language-server
 
-    # Haskell
-    stack
-    ghc
-    cabal-install
-    (import (builtins.fetchTarball
-      "https://github.com/cachix/ghcide-nix/tarball/master") { }).ghcide-ghc865
-    ormolu
+      # Window manager stuff
+      dmenu
+      nitrogen
+      dunst
+      rofi
+      arandr
+      pavucontrol
+      breeze-gtk
+      xmobar
 
-    # Docker
-    docker-compose docker-machine
+      # IDEs and editors
+      emacs
+      vscode
+      jetbrains.idea-ultimate
+      jetbrains.datagrip
+      jetbrains.jdk
 
-    # Git
-    gitAndTools.git-fame
+      # For the dumping and loading tools
+      postgresql_12
 
-    # Nix tools
-    cachix
-    nixops
-    nixfmt
-    nixos-generators
+      # Haskell
+      stack
+      haskell.compiler.ghc8101
+      cabal-install
+      (import (builtins.fetchTarball
+        "https://github.com/cachix/ghcide-nix/tarball/master")
+        { }).ghcide-ghc883
+      ormolu
+      hlint
+      exercism
+      summoner
 
-    # Unholy, but pin to nixpkgs version so it doesn't get rebuilt all the time
-    (wrapCC (gcc9.cc.override { langFortran = true; }))
+      # Docker
+      docker-compose
+      docker-machine
 
-  ];
+      # Git
+      gitAndTools.git-fame
+      git-crypt
+
+      # Nix tools
+      cachix
+      nixops
+      nixfmt
+      nixos-generators
+      nix-prefetch-github
+      niv
+    ];
+  };
 
   fonts = {
     enableFontDir = true;
@@ -130,9 +169,9 @@ with lib;
 
   services = {
     udev.extraRules = ''
-                    # Rule for the Ergodox EZ Original / Shine / Glow
-                    SUBSYSTEM=="usb", ATTR{idVendor}=="feed", ATTR{idProduct}=="1307", GROUP="plugdev"
-                    '';
+      # Rule for the Ergodox EZ Original / Shine / Glow
+      SUBSYSTEM=="usb", ATTR{idVendor}=="feed", ATTR{idProduct}=="1307", GROUP="plugdev"
+    '';
     # Enable the OpenSSH daemon.
     openssh = {
       enable = true;
@@ -156,18 +195,9 @@ with lib;
 
       windowManager.xmonad = {
         enable = true;
-        extraPackages = with pkgs;( hs: [
-          dmenu
-          hs.xmobar
-          nitrogen
-          dunst
-          rofi
-          arandr
-          pavucontrol
-          breeze-gtk
-        ]);
+        extraPackages = with pkgs; (hs: [ hs.xmobar ]);
         enableContribAndExtras = true;
-        config = ../dotfiles/xmonad/config.hs;
+        config = ../dotfiles/xmonad/xmonad.hs;
       };
     };
   };
