@@ -1,3 +1,3 @@
 dotfiles/.gitconfig filter=git-crypt diff=git-crypt
 **/*.secret filter=git-crypt diff=git-crypt
-
+secret.env filter=git-crypt diff=git-crypt

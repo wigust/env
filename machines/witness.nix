@@ -14,15 +14,18 @@ with lib; {
 
     # Cachix
     ../cachix.nix
+
+    # Ly
+    ../modules/ly.nix
   ];
   nix.trustedUsers = [ "root" "ben" ];
   nixpkgs = {
 
     overlays = [
-      (import ../overlays/ormolu.nix)
+      (import ../overlays/haskell.nix)
       (import ../overlays/chromium.nix)
-      (import ../overlays/summoner.nix)
       (import ../overlays/steam.nix)
+      (import ../overlays/nix.nix)
     ];
 
     config = {
@@ -127,13 +130,11 @@ with lib; {
       stack
       haskell.compiler.ghc8101
       cabal-install
-      (import (builtins.fetchTarball
-        "https://github.com/cachix/ghcide-nix/tarball/master")
-        { }).ghcide-ghc883
       ormolu
       hlint
       exercism
       summoner
+      haskell-language-server
 
       # Docker
       docker-compose
@@ -189,7 +190,7 @@ with lib; {
       enable = true;
       layout = "us";
       desktopManager.xterm.enable = false;
-      displayManager.lightdm.enable = true;
+      displayManager.ly.enable = true;
       displayManager.defaultSession = "none+xmonad";
       videoDrivers = [ "nvidia" ];
 

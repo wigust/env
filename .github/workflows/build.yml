@@ -1,0 +1,26 @@
+name: Build
+
+# Trigger the workflow on push or pull request
+on:
+  push:
+
+jobs:
+   hls:
+   witness:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v10
+      with:
+        skip_adding_nixpkgs_channel: true
+    - uses: cachix/cachix-action@v6
+      with:
+        name: busc-env
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - name: Add binary caches
+      run: |
+        cachix use iohk
+        cachix use busc-env
+    - name: Build
+      run: | 
+        nix-build -A witness
