@@ -6,32 +6,25 @@
 with lib; {
   imports = [
     # Include the results of the hardware scan.
-    /etc/nixos/hardware-configuration.nix
-    # Pin the 20.03 home-manager release instead of using channels
-    (import (fetchTarball
-      "https://github.com/rycee/home-manager/archive/release-20.03.tar.gz")
-      { }).nixos
-
+    ./witness-hardware.nix
     # Cachix
     ../cachix.nix
-
-    # Ly
-    ../modules/ly.nix
   ];
-  nix.trustedUsers = [ "root" "ben" ];
+  nix = {
+    package = pkgs.nixUnstable;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
+    trustedUsers = [ "root" "ben" ];
+  };
   nixpkgs = {
 
-    overlays = [
-      (import ../overlays/haskell.nix)
-      (import ../overlays/chromium.nix)
-      (import ../overlays/steam.nix)
-      (import ../overlays/nix.nix)
-    ];
+    overlays =
+      [ (import ../overlays/packages.nix) (import ../overlays/haskell.nix) ];
 
     config = {
       # Allow un-free packages
       allowUnfree = true;
-      allowBroken = true;
       chromium = { enableWideVine = true; };
     };
   };
@@ -42,25 +35,36 @@ with lib; {
       grub.version = 2;
       # Define on which hard drive you want to install Grub.
       grub.device = "/dev/nvme0n1"; # or "nodev" for efi only
+      grub.extraEntries = ''
+        menuentry "Windows 10" {
+          chainloader (hd0,1)+1
+        }
+      '';
     };
     extraModulePackages = [ config.boot.kernelPackages.exfat-nofuse ];
-    kernelModules = [ "kvm-amd" "kvm-intel" ];
+    kernelModules = [ "kvm-amd" "nvidia" ];
+    supportedFilesystems = [ "ntfs" ];
   };
 
-  virtualisation = {
-    libvirtd.enable = true;
-    docker.enable = true;
-  };
+  virtualisation = { docker.enable = true; };
 
   # Set the time zone.
   time.timeZone = "America/Detroit";
 
   environment = {
-    variables = { "_JAVA_AWT_WM_NONREPARENTING" = "1"; };
+    variables = {
+      "_JAVA_AWT_WM_NONREPARENTING" = "1";
+      "EDITOR" = "${pkgs.emacs}/bin/emacs";
+    };
+    shellAliases = rec {
+      switch =
+        "sudo nixos-rebuild switch --flake ${config.users.users.ben.home}/env";
+      upgrade = "${switch} --upgrade";
+    };
     systemPackages = with pkgs; [
       # Utilities
       git
-      oh-my-zsh
+      zsh-powerlevel10k
       wget
       curl
       ispell
@@ -72,20 +76,18 @@ with lib; {
       gnumake
       htop
       xclip
-      pandoc
       killall
+      direnv
 
       # Terminal
       alacritty
-      hyper
 
       # Node
       nodejs-12_x
       yarn
 
       # Internet & media
-      google-chrome
-      chromium
+      unstable.chromium
       vlc
       spotify
       epdfview
@@ -93,18 +95,18 @@ with lib; {
       libreoffice
 
       # Games
-      steam
-
+      unstable.steam
+      pyfa
+      unstable.discord
+      eve-online
       # Chat apps
-      discord
       slack
-      mattermost
 
       # Python
-      (python38Full.withPackages (ps: with ps; [ setuptools pip virtualenv ]))
+      (python38Full.withPackages
+        (ps: with ps; [ setuptools pip virtualenv tkinter ]))
       python38Packages.poetry
-      python3Packages.black
-      python3Packages.python-language-server
+      python38Packages.black
 
       # Window manager stuff
       dmenu
@@ -118,44 +120,70 @@ with lib; {
 
       # IDEs and editors
       emacs
-      vscode
+      (let
+        extensions = (with vscode-extensions; [
+          bbenoist.Nix
+          unstable.vscode-extensions.ms-vsliveshare.vsliveshare
+          ms-python.python
+          ms-azuretools.vscode-docker
+          ms-vscode-remote.remote-ssh
+        ]) ++ vscode-utils.extensionsFromVscodeMarketplace [{
+          name = "remote-ssh-edit";
+          publisher = "ms-vscode-remote";
+          version = "0.47.2";
+          sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
+        }];
+      in vscode-with-extensions.override { vscodeExtensions = extensions; })
       jetbrains.idea-ultimate
+      jetbrains.pycharm-professional
+      unstable.jetbrains.rider
       jetbrains.datagrip
       jetbrains.jdk
+
+      # Dotnet
+      unstable.dotnet-sdk_5
 
       # For the dumping and loading tools
       postgresql_12
 
       # Haskell
-      stack
+      unstable.stack
       haskell.compiler.ghc8101
       cabal-install
       ormolu
       hlint
       exercism
       summoner
-      haskell-language-server
+      # haskell-language-server
+
+      # Unison
+      unison-ucm
 
       # Docker
       docker-compose
       docker-machine
 
+      # Actions
+      unstable.act
+
       # Git
       gitAndTools.git-fame
       git-crypt
+      git-lfs
 
       # Nix tools
       cachix
       nixops
       nixfmt
       nixos-generators
-      nix-prefetch-github
+      unstable.nix-prefetch-github
+      nix-index
       niv
     ];
   };
 
   fonts = {
-    enableFontDir = true;
+    fontDir.enable = true;
     enableDefaultFonts = true;
     fonts = with pkgs; [
       corefonts
@@ -169,10 +197,12 @@ with lib; {
   };
 
   services = {
+    devmon.enable = true;
     udev.extraRules = ''
       # Rule for the Ergodox EZ Original / Shine / Glow
       SUBSYSTEM=="usb", ATTR{idVendor}=="feed", ATTR{idProduct}=="1307", GROUP="plugdev"
     '';
+
     # Enable the OpenSSH daemon.
     openssh = {
       enable = true;
@@ -190,8 +220,17 @@ with lib; {
       enable = true;
       layout = "us";
       desktopManager.xterm.enable = false;
-      displayManager.ly.enable = true;
-      displayManager.defaultSession = "none+xmonad";
+      displayManager = {
+        lightdm = {
+          enable = true;
+          greeters.pantheon.enable = true;
+        };
+        sessionCommands = ''
+          ${pkgs.xorg.xrandr}/bin/xrandr --output DVI-D-0 --primary --mode 1920x1080 --pos 1920x0 --rotate normal --output HDMI-0 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-0 --mode 1920x1080 --pos 3840x0 --rotate normal --output DP-1 --off
+          ${pkgs.nitrogen}/bin/nitrogen --restore
+        '';
+        defaultSession = "none+xmonad";
+      };
       videoDrivers = [ "nvidia" ];
 
       windowManager.xmonad = {
@@ -219,7 +258,11 @@ with lib; {
     opengl = {
       enable = true;
       driSupport32Bit = true;
-      extraPackages = with pkgs; [ libva ];
+      extraPackages = with pkgs; [
+        libva
+        libGL_driver
+        config.boot.kernelPackages.nvidia_x11.out
+      ];
     };
     pulseaudio = {
       enable = true;
@@ -230,23 +273,37 @@ with lib; {
     defaultUserShell = pkgs.zsh;
 
     users.ben = rec {
+      uid = 1000;
       isNormalUser = true;
-      extraGroups = [ "wheel" "plugdev" "networkmanager" "docker" "libvirtd" ];
+      extraGroups =
+        [ "wheel" "plugdev" "networkmanager" "docker" "libvirtd" "disk" ];
       initialPassword = "1234";
       home = "/home/ben";
-      openssh.authorizedKeys.keyFiles =
-        [ "${home}/.ssh/ben@busc.pub" "${home}/.ssh/id_rsa.pub" ];
+      openssh.authorizedKeys.keyFiles = [
+        (../. + (builtins.toPath "/credentials/ssh/ben@busc.pub"))
+        ../credentials/ssh/id_rsa.pub
+      ];
     };
-  };
 
-  home-manager.users.ben = import ../home.nix {
-    inherit pkgs;
-    inherit (users.users.ben) home;
+    extraGroups.vboxusers.members = [ "ben" ];
   };
 
   programs = {
     ssh = { startAgent = true; };
-    zsh.enable = true;
+    zsh = {
+      enable = true;
+      shellInit = ''
+        eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+        . $HOME/.p10k.zsh
+      '';
+      promptInit =
+        "source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+      ohMyZsh = {
+        enable = true;
+        plugins = [ "git" "docker" "docker-compose" "pip" ];
+      };
+    };
+
   };
 
   system.stateVersion = "20.03";

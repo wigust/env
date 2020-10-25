@@ -13,7 +13,7 @@ plugins+=(cabal pip yarn)
 
 
 # Theme
-ZSH_THEME="avit"
+ZSH_THEME="p10k"
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"

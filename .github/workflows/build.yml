@@ -5,14 +5,13 @@ on:
   push:
 
 jobs:
-   hls:
-   witness:
+  witness:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - uses: cachix/install-nix-action@v10
       with:
-        skip_adding_nixpkgs_channel: true
+        nix_path: nixpkgs=channel:nixos-20.03
     - uses: cachix/cachix-action@v6
       with:
         name: busc-env
@@ -24,3 +23,23 @@ jobs:
     - name: Build
       run: | 
         nix-build -A witness
+  hls:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v10
+      with:
+        nix_path: nixpkgs=channel:nixos-20.03
+    - uses: cachix/cachix-action@v6
+      with:
+        name: busc-env
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - name: Add binary caches
+      run: |
+        cachix use iohk
+        cachix use busc-env
+    - name: Build
+      run: | 
+        nix-build -A hls-865
+        nix-build -A hls-883
+        nix-build -A hls-8101

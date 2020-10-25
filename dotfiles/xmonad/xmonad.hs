@@ -38,7 +38,7 @@ hyper = meh .|. mod4Mask
 myModMask = meh
 
 -- Workspaces
-myWorkspaces = ["Terminal", "Web", "Editor"] ++ map show [4 .. 10]
+myWorkspaces = map show [1 .. 20]
 
 -- Simple settings
 myFocusFollowsMouse = True
@@ -51,46 +51,51 @@ myTerminal = "alacritty"
 myMouseBindings _ = M.empty
 
 myKeys :: XConfig l -> M.Map (KeyMask, KeySym) (X ())
-myKeys conf = M.fromList $
-  [ -- Application launcher
-    ((meh, xK_d), spawn "rofi -lines 12 -padding 18 -width 60 -location 0 -show drun -sidebar-mode -columns 3 -font 'Fira Code 10'"),
-    ((hyper, xK_d), spawn "dmenu_run"),
-    -- Terminal
-    ((meh, xK_Return), spawn $ XMonad.terminal conf),
-    -- Applications
-    ((meh, xK_F1), spawn "chromium"),
-    ((meh, xK_F2), spawn "emacs"),
-    ((meh, xK_F3), spawn "steam"),
-    -- Management
-    ((hyper, xK_k), kill),
-    ((meh, xK_Left), windowGo L False >> resetPointer),
-    ((meh, xK_Right), windowGo R False >> resetPointer),
-    ((hyper, xK_Left), windowSwap' L False >> resetPointer),
-    ((hyper, xK_Right), windowSwap' R False >> resetPointer),
-    -- Restart XMonad, doesn't work as expected because of Nix, gotta fix
-    ((hyper, xK_r), do newXmonad <- runProcessWithInput "nix" ["eval", "nixos.xmonad", "--raw"] ""
-                       restart newXmonad True),
-    -- Mute volume.
-    ((0, xF86XK_AudioMute), safeSpawn "amixer" ["-D", "pulse", "sset", "Master", "toggle"]),
-    -- Decrease volume.
-    ((0, xF86XK_AudioLowerVolume), volume "-1%"),
-    ((meh, xK_Page_Down), volume "-1%"),
-    -- Increase volume.
-    ((0, xF86XK_AudioRaiseVolume), volume "+1%"),
-    ((meh, xK_Page_Up), volume "+1%")
-  ]
-    -- Switch workspace - meh-[1..9]
-    -- Move to workspace - hyper-[1..9]
-    ++ [ ((mask, key), windows (func n) >> resetPointer)
-         | (n, key) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9],
-           (func, mask) <- [(W.greedyView, meh), (W.shift, hyper)]
-       ]
-    -- Switch screen - meh-[q,w,e]
-    -- Move to screen - hyper-[q,w,e]
-    ++ [ ((mask, key), func sc >> resetPointer)
-         | (key, sc) <- zip [xK_q, xK_w, xK_e] [0 ..],
-           (func, mask) <- [(viewScreen horizontalScreenOrderer, meh), (sendToScreen horizontalScreenOrderer, hyper)]
-       ]
+myKeys conf =
+  M.fromList $
+    [ -- Application launcher
+      ((meh, xK_d), spawn "rofi -lines 12 -padding 18 -width 60 -location 0 -show drun -sidebar-mode -columns 3 -font 'Fira Code 10'"),
+      ((hyper, xK_d), spawn "dmenu_run"),
+      -- Terminal
+      ((meh, xK_Return), spawn $ XMonad.terminal conf),
+      -- Applications
+      -- ((meh, xK_F1), spawn "chromium"),
+      -- ((meh, xK_F2), spawn "emacs"),
+      -- ((meh, xK_F3), spawn "steam"),
+      -- Management
+      ((hyper, xK_k), kill),
+      ((meh, xK_Left), windowGo L False >> resetPointer),
+      ((meh, xK_Right), windowGo R False >> resetPointer),
+      ((hyper, xK_Left), windowSwap' L False >> resetPointer),
+      ((hyper, xK_Right), windowSwap' R False >> resetPointer),
+      -- Restart XMonad, doesn't work as expected because of Nix, gotta fix
+      ( (hyper, xK_r),
+        do
+          newXmonad <- runProcessWithInput "nix" ["eval", "nixos.xmonad", "--raw"] ""
+          restart newXmonad True
+      ),
+      -- Mute volume.
+      ((0, xF86XK_AudioMute), safeSpawn "amixer" ["-D", "pulse", "sset", "Master", "toggle"]),
+      -- Decrease volume.
+      ((0, xF86XK_AudioLowerVolume), volume "-1%"),
+      ((meh, xK_Page_Down), volume "-1%"),
+      -- Increase volume.
+      ((0, xF86XK_AudioRaiseVolume), volume "+1%"),
+      ((meh, xK_Page_Up), volume "+1%")
+    ]
+      -- Switch workspace - meh-[1..9, 0]
+      -- Move to workspace - hyper-[1..0, 0]
+      -- ! @ # $ % ^ & * ( )
+      ++ [ ((mask, key), windows (func n) >> resetPointer)
+           | (n, key) <- zip (XMonad.workspaces conf) ([xK_1 .. xK_9] ++ [xK_0] ++ [xK_F1 .. xK_F10]),
+             (func, mask) <- [(W.greedyView, meh), (W.shift, hyper)]
+         ]
+      -- Switch screen - meh-[q,w,e]
+      -- Move to screen - hyper-[q,w,e]
+      ++ [ ((mask, key), func sc >> resetPointer)
+           | (key, sc) <- zip [xK_q, xK_w, xK_e] [0 ..],
+             (func, mask) <- [(viewScreen horizontalScreenOrderer, meh), (sendToScreen horizontalScreenOrderer, hyper)]
+         ]
   where
     windowSwap' direction wrap = windowSwap direction wrap >> windowGo direction wrap
     volume change = safeSpawn "volume" [change]
@@ -156,10 +161,6 @@ myLayout =
 
 main = do
   xmproc <- spawnPipe "xmobar ~/.xmonad/xmobar.hs"
-  -- Load wallpaper
-  spawn "nitrogen --restore"
-  -- Setup desktop screens
-  spawn "sh ~/desktop.sh"
   xmonad $
     def
       { -- simple stuff

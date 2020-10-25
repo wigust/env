@@ -9,16 +9,23 @@ with lib; {
       source = pkgs.fetchFromGitHub {
         owner = "syl20bnr";
         repo = "spacemacs";
-        rev = "c43b9ea104510a7a91ba6342b663b44737d4f716";
-        sha256 = "0xara6g0fkqxp1dnwlan1kkgiwfrzkpnyf2rn44m9n8d8h72nh2n";
+        rev = "ab52131d9859bb9346da7473ff9672309f0ead5d";
+        sha256 = "sha256-l/j/pICqkY841DnYFLfYRSVnnFccVS/uM3Y5C7MMrzI=";
+        fetchSubmodules = true;
       };
       recursive = true;
     };
     ".spacemacs".source = ./dotfiles/.spacemacs;
-    ".zshrc".source = ./dotfiles/.zshrc;
     ".gitconfig".source = ./dotfiles/.gitconfig;
     ".ssh/config".source = ./dotfiles/ssh/config;
     ".xmonad/xmobar.hs".source = ./dotfiles/xmonad/xmobar.hs;
-    "desktop.sh".source = ./dotfiles/desktop.sh;
+  };
+  programs.git.extraConfig = {
+    "filter \"lfs\"" = {
+      clean = "${pkgs.git-lfs}/bin/git-lfs clean -- %f";
+      smudge = "${pkgs.git-lfs}/bin/git-lfs smudge --skip -- %f";
+      process = "${pkgs.git-lfs}/bin/git-lfs filter-process --skip";
+      required = true;
+    };
   };
 }

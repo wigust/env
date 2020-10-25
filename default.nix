@@ -1,5 +1,5 @@
 { pkgs ? import <nixpkgs> { config.allowUnfree = true; } }:
-let hls = version: (import .  /packages/hls.nix) { inherit pkgs version; };
+let hls = version: (import ./packages/hls.nix) { inherit pkgs version; };
 in {
   witness = import <nixpkgs/nixos/tests/make-test-python.nix> ({ ... }: {
     name = "witness-test";

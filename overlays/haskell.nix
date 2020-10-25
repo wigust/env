@@ -7,7 +7,6 @@ let
     rev = "913a927f398a4bfa478922d851c080281e83bc8c";
     sha256 = "0az6svwj7brcq42y238wf4d43mw5v8ykcf3kh52d009azxf8xn6f";
   }) { pkgs = self; };
-  master = ((import ../sources).master) { };
 in {
   haskell = super.haskell // {
     packages = super.haskell.packages // {
@@ -17,7 +16,6 @@ in {
         };
     };
   };
-  stack = master.stack;
   summoner = self.stdenv.mkDerivation rec {
     name = "summoner-cli";
     version = "2.0.1.1";
