@@ -1,11 +1,12 @@
 {
   inputs = {
+    nixos.url = "nixpkgs/nixos-20.09";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/master";
     home-manager.url = "github:nix-community/home-manager";
     nixos-2003.url = "github:nixos/nixpkgs/nixos-20.03";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, nixos-2003 }:
+  outputs = { self, nixos, nixpkgs-unstable, home-manager, nixos-2003 }:
     let
       inherit (builtins) attrNames attrValues;
       system = "x86_64-linux";
@@ -15,7 +16,7 @@
           config = { allowUnfree = true; };
         };
     in {
-      nixosConfigurations.witness = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.witness = nixos.lib.nixosSystem {
         inherit system;
         modules = [
           ({ ... }: {

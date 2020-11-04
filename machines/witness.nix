@@ -28,6 +28,7 @@ with lib; {
       chromium = { enableWideVine = true; };
     };
   };
+  nix.systemFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
 
   boot = {
     loader = {
@@ -92,7 +93,6 @@ with lib; {
       spotify
       epdfview
       nomacs
-      libreoffice
 
       # Games
       unstable.steam
@@ -183,7 +183,7 @@ with lib; {
   };
 
   fonts = {
-    fontDir.enable = true;
+    enableFontDir = true;
     enableDefaultFonts = true;
     fonts = with pkgs; [
       corefonts
@@ -213,7 +213,6 @@ with lib; {
       user = "ben";
       dataDir = "${config.users.users.ben.home}/.syncthing";
     };
-    lorri.enable = true;
 
     # Enable the X11 windowing system.
     xserver = {
@@ -306,5 +305,5 @@ with lib; {
 
   };
 
-  system.stateVersion = "20.03";
+  system.stateVersion = "20.09";
 }
