@@ -1,0 +1,20 @@
+[
+  ./core
+  ./develop
+  ./develop/python
+  ./develop/tmux
+  ./develop/zsh
+  ./develop/nix
+  ./graphical
+  ./graphical/games
+  ./graphical/im
+  ./graphical/plex.nix
+  ./graphical/xmonad
+  ./network
+  ./network/adblocking.nix
+  ./network/networkmanager
+  ./network/syncthing
+  ./network/stubby.nix
+  ./ssh
+  ./virt
+]
