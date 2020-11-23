@@ -20,9 +20,7 @@
 
       utils = import ./lib/utils.nix { inherit lib; };
 
-      system = "x86_64-linux";
-
-      pkgImport = pkgs:
+      pkgImport = { pkgs, system ? "x86_64-linux" }:
         import pkgs {
           inherit system;
           overlays = attrValues self.overlays ++ [ emacs.overlay ];
@@ -34,18 +32,18 @@
           };
         };
 
-      pkgset = {
-        osPkgs = pkgImport nixos;
-        pkgs = pkgImport master;
-      };
-      eeee = "a";
-
-    in with pkgset; {
-      nixosConfigurations = import ./hosts
-        (recursiveUpdate inputs { inherit lib pkgset system utils; });
+    in {
+      nixosConfigurations = import ./hosts (recursiveUpdate inputs {
+        inherit lib utils;
+        pkgset = {
+          osPkgs = pkgImport { pkgs = nixos; };
+          pkgs = pkgImport { pkgs = master; };
+        };
+      });
 
       darwinConfigurations = import ./hosts/darwin (recursiveUpdate inputs {
         inherit (darwin) lib utils;
+        system = "x86_64-darwin";
         pkgs = pkgImport nixpkgs-darwin;
       });
 

@@ -1,68 +1,43 @@
-{ home
-, nix-darwin
-, lib
-, nixpkgs-darwin
-, pkgset
-, self
-, utils
-, ...
-}:
+{ home, nix-darwin, lib, pkgs, self, utils, ... }:
 let
   inherit (utils) recImport;
   inherit (builtins) attrValues removeAttrs;
-  inherit (pkgset) osPkgs pkgs;
 
   config = hostName:
-    lib.nixosSystem {
+    lib.darwinSystem {
 
-      modules =
-        let
-          inherit (home.nixosModules) home-manager;
+      modules = let
+        inherit (home.darwinModules) home-manager;
 
-          core = self.nixosModules.profiles.core;
+        core = self.darwinModules.profiles.core;
 
-          global = {
-            networking.hostName = hostName;
-            nix.nixPath = let path = toString ../.; in
-              [
-                "nixpkgs=${master}"
-                "nixos=${nixos}"
-                "nixos-config=${path}/configuration.nix"
-                "nixpkgs-overlays=${path}/overlays"
-              ];
+        global = {
+          networking.hostName = hostName;
+          nix.nixPath = let path = toString ../.;
+          in [
+            "nixpkgs=${nix-darwin}"
+            "nixos-config=${path}/configuration.nix"
+            "nixpkgs-overlays=${path}/overlays"
+          ];
 
-            nixpkgs = { pkgs = osPkgs; };
+          nixpkgs = { pkgs = osPkgs; };
+        };
 
-            nix.registry = {
-              nixos.flake = nixos;
-              nixflk.flake = self;
-              nixpkgs.flake = master;
-            };
-          };
+        overrides = {
+          nixpkgs.overlays = let
+            override = import ../pkgs/override.nix pkgs;
 
-          overrides = {
-            # use latest systemd
-            # systemd.package = pkgs.systemd;
+            overlay = pkg: final: prev: { "${pkg.pname}" = pkg; };
+          in map overlay override;
+        };
 
-            nixpkgs.overlays =
-              let
-                override = import ../pkgs/override.nix pkgs;
+        local = import "${toString ./.}/${hostName}.nix";
 
-                overlay = pkg: final: prev: {
-                  "${pkg.pname}" = pkg;
-                };
-              in
-              map overlay override;
-          };
+        # Everything in `./modules/list.nix`.
+        flakeModules =
+          attrValues (removeAttrs self.darwinModules [ "profiles" ]);
 
-          local = import "${toString ./.}/${hostName}.nix";
-
-          # Everything in `./modules/list.nix`.
-          flakeModules =
-            attrValues (removeAttrs self.nixosModules [ "profiles" ]);
-
-        in
-        flakeModules ++ [ core global local home-manager overrides ];
+      in flakeModules ++ [ core global local home-manager overrides ];
 
     };
 
@@ -70,5 +45,4 @@ let
     dir = ./.;
     _import = config;
   };
-in
-hosts
+in hosts

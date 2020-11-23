@@ -21,7 +21,7 @@
       ];
 
       services.emacs.client.enable = false;
-      home.file.".gitconfig".source = ../../secrets/dotfiles/.gitconfig;
+      home.file.".gitconfig".source = ../../secrets/dotfiles/home.gitconfig;
     };
 
   users.users.ben = {
