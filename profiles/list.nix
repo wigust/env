@@ -3,7 +3,6 @@
   ./develop
   ./develop/python
   ./develop/tmux
-  ./develop/zsh
   ./develop/nix
   ./graphical
   ./graphical/games

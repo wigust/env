@@ -18,9 +18,8 @@
         ../profiles/alacritty
         ../profiles/xmonad
         ../profiles/emacs
+        ../profiles/zsh
       ];
-
-      services.emacs.client.enable = false;
       home.file.".gitconfig".source = ../../secrets/dotfiles/home.gitconfig;
     };
 

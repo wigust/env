@@ -15,9 +15,9 @@ let
           networking.hostName = hostName;
           nix.nixPath = let path = toString ../.;
           in [
-            "nixpkgs=${nix-darwin}"
-            "nixos-config=${path}/configuration.nix"
-            "nixpkgs-overlays=${path}/overlays"
+            "nixpkgs=${pkgs.path}"
+            "nixpkgs-overlays=${toString ./overlays}"
+            "darwin=${inputs.nix-darwin}"
           ];
 
           nixpkgs = { pkgs = osPkgs; };
