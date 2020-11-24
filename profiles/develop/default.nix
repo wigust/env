@@ -1,5 +1,5 @@
 { pkgs, ... }: {
-  imports = [ ./zsh ./python ];
+  imports = [ ./python ];
 
   environment.shellAliases = { e = "$EDITOR"; };
   environment.variables = { };

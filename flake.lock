@@ -40,16 +40,15 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1604441492,
-        "narHash": "sha256-Wo7WqdwNQnWHmhyZuhVLrAEpCuZl88cA9ttxkiCTekY=",
+        "lastModified": 1606046962,
+        "narHash": "sha256-244JrrVFht/VMRItDcDlrcwejqpqJInDUWA/x6mucW4=",
         "owner": "rycee",
         "repo": "home-manager",
-        "rev": "63f299b3347aea183fc5088e4d6c4a193b334a41",
+        "rev": "a3a0f1289acac24ce2ffe0481bf8cabd3a6ccc64",
         "type": "github"
       },
       "original": {
         "owner": "rycee",
-        "ref": "release-20.09",
         "repo": "home-manager",
         "type": "github"
       }

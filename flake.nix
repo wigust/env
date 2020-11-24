@@ -4,7 +4,7 @@
   inputs = {
     master.url = "nixpkgs/master";
     nixos.url = "nixpkgs/nixos-unstable";
-    home.url = "github:rycee/home-manager/release-20.09";
+    home.url = "github:rycee/home-manager";
     emacs.url = "github:nix-community/emacs-overlay";
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-20.09-darwin";
     darwin.url = "github:lnl7/nix-darwin";

@@ -35,5 +35,5 @@
       ../../secrets/credentials/ssh/id_rsa.pub
     ];
   };
-  users.extraGroups.vboxusers.members = [ "ben" ];
+  users.defaultUserShell = pkgs.zsh;
 }
