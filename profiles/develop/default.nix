@@ -1,7 +1,8 @@
 { pkgs, ... }: {
-  imports = [ ./python ];
-
-  environment.shellAliases = { e = "$EDITOR"; };
+  environment.shellAliases = {
+    e = "$EDITOR";
+    rebuild = "sudo nixos-rebuild switch --flake $HOME/env";
+  };
   environment.variables = { };
   environment.sessionVariables = {
     "_JAVA_AWT_WM_NONREPARENTING" = "1";
@@ -43,12 +44,6 @@
     #   vscode-with-extensions.override { vscodeExtensions = extensions; }
     # )
     vscode
-    jetbrains.idea-ultimate
-    jetbrains.rider
-    jetbrains.datagrip
-    jetbrains.pycharm-professional
-    jetbrains.mps
-    jetbrains.jdk
   ];
 
   documentation.dev.enable = true;

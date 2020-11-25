@@ -1,9 +1,9 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, ... }:
+let inherit (lib) fileContents;
+in {
   imports = [
-    ../../profiles/develop
     ../../profiles/graphical/games
     ../../profiles/graphical
-    ../../profiles/develop/nix
     # User specific stuff
     ./restic
     ./syncthing
@@ -13,11 +13,14 @@
   home-manager.users.ben = { home, config, ... }:
     with home; {
       imports = [
-        ../profiles/git
-        ../profiles/direnv
         ../profiles/alacritty
-        ../profiles/xmonad
+        ../profiles/develop
+        ../profiles/develop/direnv
+        ../profiles/develop/git
+        ../profiles/develop/nix
+        ../profiles/develop/python
         ../profiles/emacs
+        ../profiles/xmonad
         ../profiles/zsh
       ];
       home.file.".gitconfig".source = ../../secrets/dotfiles/home.gitconfig;
@@ -36,4 +39,9 @@
     ];
   };
   users.defaultUserShell = pkgs.zsh;
+  environment.shellInit = ''
+    export STARSHIP_CONFIG=${
+      pkgs.writeText "starship.toml" (fileContents ./starship.toml)
+    }
+  '';
 }

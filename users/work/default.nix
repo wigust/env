@@ -1,23 +1,18 @@
 { lib, pkgs, ... }: {
-  imports = [
-    # ../../profiles/develop
-    # ../../profiles/graphical/games
-    # ../../profiles/graphical
-    # ../../profiles/develop/nix
-    # # User specific stuff
-    # ./restic
-    # ./syncthing
-  ];
+  imports = [ ];
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.users.ben = { home, config, ... }:
     with home; {
       imports = [
-        ../profiles/git
-        ../profiles/direnv
         ../profiles/alacritty
-        ../profiles/zsh
+        ../profiles/develop
+        ../profiles/develop/direnv
+        ../profiles/develop/git
+        ../profiles/develop/nix
+        ../profiles/develop/python
         ../profiles/emacs
+        ../profiles/zsh
       ];
 
       home.file.".gitconfig".source = ../../secrets/dotfiles/work.gitconfig;

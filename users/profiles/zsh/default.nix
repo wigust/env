@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, config, ... }:
 let
   inherit (builtins) concatStringsSep;
 
@@ -49,6 +49,49 @@ in {
     };
 
     shellAliases = {
+      # quick cd
+      ".." = "cd ..";
+      "..." = "cd ../..";
+      "...." = "cd ../../..";
+      "....." = "cd ../../../..";
+
+      # git
+      g = "git";
+
+      # grep
+      grep = "rg";
+      gi = "grep -i";
+
+      # internet ip
+      myip = "dig +short myip.opendns.com @208.67.222.222 2>&1";
+
+      # nix
+      n = "nix";
+      np = "n profile";
+      ni = "np install";
+      nr = "np remove";
+      ns = "n search --no-update-lock-file";
+      nf = "n flake";
+      srch = "ns nixpkgs";
+      nrb = "sudo nixos-rebuild";
+
+      # sudo
+      s = "sudo -E ";
+      si = "sudo -i";
+      se = "sudoedit";
+
+      # top
+      top = "gotop";
+
+      # systemd
+      ctl = "systemctl";
+      stl = "s systemctl";
+      utl = "systemctl --user";
+      ut = "systemctl --user start";
+      un = "systemctl --user stop";
+      up = "s systemctl start";
+      dn = "s systemctl stop";
+      jtl = "journalctl";
       cat = "${pkgs.bat}/bin/bat";
 
       df = "df -h";
@@ -64,7 +107,6 @@ in {
 
       rz = "exec zsh";
     };
-
     initExtra = let
       sources = with pkgs; [
         ./cdr.zsh
@@ -150,10 +192,7 @@ in {
       # Auto rehash for new binaries
       zstyle ':completion:*' rehash true
 
-      # remove duplicates from paths
-      typeset -U path
-      typeset -U fpath
-
+      # remove duplicates from pathsDejaVu Sans Mono
       # keep shell state frozen
       ttyctl -f
 
