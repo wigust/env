@@ -17,8 +17,8 @@ in {
       source = pkgs.fetchFromGitHub {
         owner = "syl20bnr";
         repo = "spacemacs";
-        rev = "77d84b14e057aadc6a71c536104b57c617600f35";
-        sha256 = "sha256-GXhBX/nQfXX+p/G2gI1lcBwW5gxbLh4P7UzPARRjfB0=";
+        rev = "6ce1dc88fc74810223711faa64bb331cce0a97b8";
+        sha256 = "sha256-oVe19bP8V8RozENtDHgGR6iVQ8DiccZJtVmLOK5CWzk=";
         fetchSubmodules = true;
       };
       recursive = true;
@@ -46,7 +46,8 @@ in {
       layers = import ./layers.nix;
       themes = import ./themes.nix;
       emacsPackage = pkgs.emacsGcc;
-      extraPackages = (epkgs: with epkgs; [ doom-themes direnv company-lsp ]);
+      extraPackages =
+        (epkgs: with epkgs; [ doom-themes direnv company-lsp org-jira ]);
     })
   ];
 }

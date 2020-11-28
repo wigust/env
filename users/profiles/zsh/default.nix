@@ -73,7 +73,7 @@ in {
       ns = "n search --no-update-lock-file";
       nf = "n flake";
       srch = "ns nixpkgs";
-      nrb = "sudo nixos-rebuild";
+      nrb = "sudo nixos-rebuild switch --flake $HOME/env";
 
       # sudo
       s = "sudo -E ";

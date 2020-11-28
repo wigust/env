@@ -1,3 +1,4 @@
 secrets/* filter=git-crypt diff=git-crypt
 **/*.hashedPassword filter=git-crypt diff=git-crypt
 **/*.secret filter=git-crypt diff=git-crypt
+users/profiles/emacs/templates/**/* filter=git-crypt diff=git-crypt
