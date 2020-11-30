@@ -4,8 +4,7 @@ Config {
        -- doesn't seem to do anything anymore (0.10, darcs)
 --       lowerOnStart = False,
        commands = [
-                -- Addison, TX
-                Run Weather "KADS" ["-t"," <tempF>F","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000,
+                Run Weather "BOS" ["-t"," <tempF>F","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000,
                 Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10,
                 Run Memory ["-t","Mem: <usedratio>%"] 10,
                 Run Swap [] 10,

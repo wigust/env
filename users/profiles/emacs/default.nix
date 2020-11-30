@@ -42,12 +42,14 @@ in {
 
     sqlite
 
-    (import ./spacemacs-with-packages.nix { inherit pkgs; } {
-      layers = import ./layers.nix;
-      themes = import ./themes.nix;
-      emacsPackage = pkgs.emacsGcc;
-      extraPackages =
-        (epkgs: with epkgs; [ doom-themes direnv company-lsp org-jira ]);
-    })
+    emacsGcc
+
+    # (import ./spacemacs-with-packages.nix { inherit pkgs; } {
+    #   layers = import ./layers.nix;
+    #   themes = import ./themes.nix;
+    #   emacsPackage = pkgs.emacsGcc;
+    #   extraPackages =
+    #     (epkgs: with epkgs; [ doom-themes direnv company-lsp org-jira ]);
+    # })
   ];
 }

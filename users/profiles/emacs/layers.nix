@@ -23,6 +23,7 @@ ls:
   ls."web-beautify"
   ls."json"
   ls."ibuffer"
+  ls."templates"
   ls."treemacs"
   ls."copy-as-format"
   ls."dap"

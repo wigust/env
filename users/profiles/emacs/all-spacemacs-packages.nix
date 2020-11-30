@@ -1513,6 +1513,7 @@ in
     (checked "avy")
     (checked "bracketed-paste")
     (checked "clean-aindent-mode")
+    (checked "dired-quick-sort")
     (checked "editorconfig")
     (checked "eval-sexp-fu")
     (checked "expand-region")
@@ -1534,6 +1535,7 @@ in
     (checked "uuidgen")
     (checked "vimish-fold")
     (checked "evil-vimish-fold")
+    (checked "evil-easymotion")
     (checked "ws-butler")
   ];
   "osx" = [

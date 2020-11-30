@@ -34,6 +34,7 @@
               # Only necessary because of hindent, shouldn`t be marked broken 
               # though as an overlay should fix this????
               allowBroken = true;
+              permittedInsecurePackages = [ "python2.7-cryptography-2.9.2" ];
             };
           });
 

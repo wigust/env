@@ -26,69 +26,86 @@
 #+end_src
 ** Layer list
 #+begin_src emacs-lisp
-  (setq-default
-   dotspacemacs-configuration-layers
-   '(;; Fundamentals
-     (ibuffer :variables ibuffer-group-buffers-by 'projects)
-     templates
-     (treemacs :variables treemacs-use-git-mode 'deferred)
-     copy-as-format
-     dap
-     ;; OS
-     nixos
-     ;; Tools
-     cmake
-     docker
-     nginx
-     prodigy
-     (org :variables
-          org-projectile-file "TODOS.org"
-          org-support-shift-select t)
-     ;; LSP
-     lsp
-     ;; Languages & File types
-     (python
-      :variables
-      python-backend 'lsp
-      python-formatter 'black
-      python-test-runner 'pytest
-      python-lsp-server 'pyls)
-     (haskell
-      :variables
-      haskell-completion-backend 'ghci)
-     (c-c++
-      :variables
-      c-c++-backend 'lsp-clangd
-      c-c++-enable-google-style t
-      c-c++-enable-google-newline t)
-     ;; (purescript :variables node-add-modules-path t)
-     sql
-     elm
-     emacs-lisp
-     html
-     javascript
-     markdown
-     yaml
-     rust
-     ;; Completion
-     (helm :variables helm-enable-auto-resize t)
-     (auto-completion :variables auto-completion-enable-sort-by-usage t)
-     (spell-checking :variables enable-flyspell-auto-completion t)
-     syntax-checking
-     ;; Source control
-     (git
-      :variables
-      magit-repository-directories '(("~/Development/" . 4))
-      )
-     github
-     version-control
-     ;; Other fun stuff
-     unicode-fonts
-     (shell :variables
-            shell-default-height 30
-            shell-default-position 'bottom)
-     emoji)
-)
+    (setq-default
+     dotspacemacs-configuration-layers
+     '(;; Fundamentals
+       (ibuffer :variables ibuffer-group-buffers-by 'projects)
+       templates
+       (treemacs :variables treemacs-use-git-mode 'deferred)
+       copy-as-format
+       dap
+       ;; OS
+       nixos
+       ;; Tools
+       cmake
+       docker
+       nginx
+       prodigy
+       (org :variables
+            org-projectile-file "TODOS.org"
+            org-support-shift-select t
+            org-enable-github-support t
+            org-enable-reveal-js-support t
+            org-enable-sticky-header t
+            ;; org-journal
+            org-enable-org-journal-support t
+            org-journal-dir "~/org/journal/"
+            org-journal-date-prefix "#+TITLE: "
+            org-journal-date-format "%A, %B %d %Y"
+            org-enable-roam-support t
+            ;; org-jira
+            org-enable-jira-support t
+            jiralib-url "https://tracker.morsecorp.com"
+            ;; org-agenda
+            org-agenda-files (list "~/org/agenda/work.org"
+                              "~/org/agenda/home.org")
+            )
+       spacemacs-org
+       ;; LSP
+       lsp
+       ;; Languages & File types
+       (python
+        :variables
+        python-backend 'lsp
+        python-formatter 'black
+        python-test-runner 'pytest
+        python-lsp-server 'pyls)
+       (haskell
+        :variables
+        haskell-completion-backend 'ghci)
+       (c-c++
+        :variables
+        c-c++-backend 'lsp-clangd
+        c-c++-enable-google-style t
+        c-c++-enable-google-newline t)
+       ;; (purescript :variables node-add-modules-path t)
+       sql
+       elm
+       emacs-lisp
+       html
+       javascript
+       markdown
+       yaml
+       rust
+       ;; Completion
+       (helm :variables helm-enable-auto-resize t)
+       (auto-completion :variables auto-completion-enable-sort-by-usage t)
+       (spell-checking :variables enable-flyspell-auto-completion t)
+       syntax-checking
+       ;; Source control
+       (git
+        :variables
+        magit-repository-directories '(("~/Development/" . 4))
+        )
+       github
+       version-control
+       ;; Other fun stuff
+       unicode-fonts
+       (shell :variables
+              shell-default-height 30
+              shell-default-position 'bottom)
+       emoji)
+  )
 #+end_src
 ** Additional Packages
 #+begin_src emacs-lisp

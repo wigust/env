@@ -2,9 +2,6 @@
 let inherit (lib) fileContents;
 in {
   imports = [
-    ../../profiles/graphical/games
-    ../../profiles/graphical
-    ../../profiles/graphical/xmonad
     # User specific stuff
     ./restic
     ./syncthing

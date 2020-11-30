@@ -8,7 +8,7 @@ final: prev: {
     src = final.fetchzip {
       url =
         "https://github.com/storj/storj/releases/${version}/download/uplink_linux_amd64.zip";
-      sha256 = "sha256-fxA7p4E5rc3wLrGXuLItEMJQr7pFq39ahp2Xm9TEIJg=";
+      sha256 = "sha256-67dkdAi7vECGpLE153/r+ojjUiI7UOldLQLLl36VVDM=";
     };
 
     installPhase = ''

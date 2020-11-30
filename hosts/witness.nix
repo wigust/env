@@ -1,5 +1,5 @@
 { lib, config, ... }: {
-  imports = [ ../users/ben ];
+  imports = [ ../users/ben ../profiles/graphical/games ../profiles/graphical ];
 
   boot = {
     loader = {
@@ -14,7 +14,6 @@
     kernelModules = [ "kvm-amd" "nvidia" ];
     supportedFilesystems = [ "ntfs" ];
   };
-
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/cc55a8e5-9b2f-4562-bdf8-5efdaa1a7f68";
     fsType = "ext4";
