@@ -1,9 +1,7 @@
-{ lib, config, pkgs, hardware, ... }:
-{
+{ lib, config, pkgs, hardware, ... }: {
 
   imports = [
     ../users/ben
-    ../profiles/graphical/games
     ../profiles/graphical
     ../profiles/graphical/xmonad
   ];
@@ -18,10 +16,9 @@
     };
     initrd.availableKernelModules =
       [ "nvme" "xhci_pci" "ahci" "usbhid" "sd_mod" "exfat" ];
-    kernelModules = [ "kvm-amd" "nvidia" ];
-    supportedFilesystems = [ "ntfs" ];
+    kernelModules = [ "kvm-amd" ];
+    supportedFilesystems = [ ];
   };
-
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/cc55a8e5-9b2f-4562-bdf8-5efdaa1a7f68";
     fsType = "ext4";
@@ -37,5 +34,6 @@
   };
 
   nix.maxJobs = lib.mkDefault 16;
-  hardware.nvidia.prime.offload.enable = false;
+  environment.systemPackages = with pkgs; [ mesa ];
+  services.xserver.videoDrivers = [ "mesa" ];
 }

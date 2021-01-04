@@ -10,8 +10,10 @@ let
           emacs --batch -l ob-tangle --eval "(org-babel-tangle-file \".spacemacs.org\")"
           mv .spacemacs.el .spacemacs
         '';
-    in "${tangled}/.spacemacs";
-in {
+    in
+    "${tangled}/.spacemacs";
+in
+{
   home.file = {
     ".emacs.d" = {
       source = pkgs.fetchFromGitHub {
@@ -22,6 +24,13 @@ in {
         fetchSubmodules = true;
       };
       recursive = true;
+    };
+    ".spacemacs.d/layers/exwm".source = pkgs.fetchFromGitHub {
+      owner = "timor";
+      repo = "spacemacsOS";
+      rev = "d8ce7d6c8fab42bffeb157f850a36b258f6a8934";
+      sha256 = "v+8HwtANhVSAGjyNA2vudFRzgo6+SHvEZfRYjPsM0O4=";
+      fetchSubmodules = true;
     };
     ".spacemacs".source = tangle ./.spacemacs.org;
   };

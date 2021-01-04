@@ -2,9 +2,10 @@
 p:
 let checked = n:
   let
-    n' = builtins.replaceStrings ["+"] ["-plus"] n;
+    n' = builtins.replaceStrings [ "+" ] [ "-plus" ] n;
     p' = p.${n'} or null;
-  in if p'.meta.broken or false then null else p';
+  in
+  if p'.meta.broken or false then null else p';
 in
 {
   "swift" = [

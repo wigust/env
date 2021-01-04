@@ -9,6 +9,7 @@ import XMonad.Actions.Navigation2D
 import XMonad.Actions.PhysicalScreens
 import XMonad.Actions.UpdatePointer
 import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops(ewmh)
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Layout.Fullscreen
@@ -22,6 +23,7 @@ import qualified XMonad.StackSet as W
 import XMonad.Util.CustomKeys
 import XMonad.Util.EZConfig (additionalKeys)
 import XMonad.Util.Run (runProcessWithInput, safeSpawn, safeSpawnProg, spawnPipe)
+
 
 -- NOTES: 0.10 works much better than 0.9, unfortunately distros mostly package 0.9 atm
 -- xmobar and fullscreen flash vids (youtube): http://code.google.com/p/xmobar/issues/detail?id=41
@@ -38,7 +40,7 @@ hyper = meh .|. mod4Mask
 myModMask = meh
 
 -- Workspaces
-myWorkspaces = map show [1 .. 20]
+myWorkspaces = map show [1 .. 10]
 
 -- Simple settings
 myFocusFollowsMouse = True
@@ -59,9 +61,9 @@ myKeys conf =
       -- Terminal
       ((meh, xK_Return), spawn $ XMonad.terminal conf),
       -- Applications
-      -- ((meh, xK_F1), spawn "chromium"),
-      -- ((meh, xK_F2), spawn "emacs"),
-      -- ((meh, xK_F3), spawn "steam"),
+      ((meh, xK_F1), spawn "chromium"),
+      ((meh, xK_F2), spawn "emacs"),
+      ((meh, xK_F3), spawn "steam"),
       -- Management
       ((hyper, xK_k), kill),
       ((meh, xK_Left), windowGo L False >> resetPointer),
@@ -71,7 +73,7 @@ myKeys conf =
       -- Restart XMonad, doesn't work as expected because of Nix, gotta fix
       ( (hyper, xK_r),
         do
-          newXmonad <- runProcessWithInput "nix" ["eval", "nixos.xmonad", "--raw"] ""
+          newXmonad <- runProcessWithInput "xmonad" [] ""
           restart newXmonad True
       ),
       -- Mute volume.
@@ -84,10 +86,9 @@ myKeys conf =
       ((meh, xK_Page_Up), volume "+1%")
     ]
       -- Switch workspace - meh-[1..9, 0]
-      -- Move to workspace - hyper-[1..0, 0]
-      -- ! @ # $ % ^ & * ( )
+      -- Move to workspace - hyper-[1..9, 0]
       ++ [ ((mask, key), windows (func n) >> resetPointer)
-           | (n, key) <- zip (XMonad.workspaces conf) ([xK_1 .. xK_9] ++ [xK_0] ++ [xK_F1 .. xK_F10]),
+           | (n, key) <- zip (XMonad.workspaces conf) ([xK_1 .. xK_9] ++ [xK_0]),
              (func, mask) <- [(W.greedyView, meh), (W.shift, hyper)]
          ]
       -- Switch screen - meh-[q,w,e]
@@ -130,12 +131,17 @@ myBorderWidth = 0
 -- Window rules
 myManageHook =
   composeAll
-    [ className =? "Steam" --> doFloat,
+    [ className =? "Chromium" --> doShift "Web",
+      className =? "Google-chrome" --> doShift "Web",
+      className =? "Alacritty" --> doShift "Terminal",
+      className =? "Emacs" --> doShift "Editor",
+      className =? "Steam" --> doFloat,
       className =? "rofi" --> doFloat,
-      className =? "factorio" --> doFullFloat,
-      isFullscreen --> doFullFloat
-    ] <+> manageDocks
-
+      -- Games
+      className =? "factorio" --> doFloat,
+      isFullscreen --> (doF W.focusDown <+> doFullFloat),
+      className =? "Carrion" --> doFloat
+    ]
 -- Layout algorithms
 myLayout =
   avoidStruts $
@@ -157,7 +163,7 @@ myLayout =
 
 main = do
   xmproc <- spawnXmobar
-  xmonad $
+  xmonad $ ewmh $
     def
       { -- simple stuff
         terminal = myTerminal,
@@ -173,7 +179,7 @@ main = do
         -- hooks, layouts
         layoutHook = smartBorders myLayout,
         manageHook = myManageHook,
-        handleEventHook = handleEventHook def <+> fullscreenEventHook,
+        handleEventHook = docksEventHook <+> fullscreenEventHook,
         logHook =
           dynamicLogWithPP $
             xmobarPP

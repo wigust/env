@@ -1,6 +1,6 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
-    discord
+    discord-canary
     element-desktop
     signal-desktop
     slack

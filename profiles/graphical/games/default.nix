@@ -6,6 +6,8 @@
     # Eve related
     # eve-online
     # pyfa
+    minecraft
+    (callPackage ./technic.nix { })
   ];
 
   sound.enable = true;

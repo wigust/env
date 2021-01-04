@@ -21,6 +21,7 @@
       ripgrep
       utillinux
       whois
+      nixFlakes
     ];
 
   };
@@ -42,10 +43,8 @@
     ];
     fontconfig.defaultFonts = {
 
-      monospace = [ "DejaVu Sans Mono Nerd Font Complete Mono" ];
-
+      monospace = [ "DejaVu Sans Mono" ];
       sansSerif = [ "DejaVu Sans" ];
-
     };
   };
 
@@ -53,8 +52,8 @@
     autoOptimiseStore = true;
     gc.automatic = true;
     optimise.automatic = true;
-
     useSandbox = true;
+    package = pkgs.nixFlakes;
 
     allowedUsers = [ "@wheel" ];
 

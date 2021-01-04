@@ -1,9 +1,10 @@
 { lib, pkgs, ... }:
 let inherit (lib) fileContents;
-in {
+in
+{
   imports = [
     # User specific stuff
-    ./restic
+    # ./restic
     ./syncthing
   ];
   home-manager.useGlobalPkgs = true;
@@ -17,6 +18,7 @@ in {
         ../profiles/develop/git
         ../profiles/develop/nix
         ../profiles/develop/python
+        ../profiles/graphical
         ../profiles/emacs
         ../profiles/xmonad
         ../profiles/zsh

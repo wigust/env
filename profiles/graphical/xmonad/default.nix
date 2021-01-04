@@ -1,19 +1,21 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
-    farbfeld
-    xss-lock
-    imgurbash2
-    maim
     xclip
-    xorg.xdpyinfo
     dunst
   ];
+  services.xserver = {
+    displayManager.defaultSession = "none+xmonad";
+    displayManager.sessionCommands = ''
+      ${pkgs.xorg.xrandr}/bin/xrandr --output DVI-D-0 --primary --mode 1920x1080 --pos 1920x0 --rotate normal --output HDMI-0 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-0 --mode 1920x1080 --pos 3840x0 --rotate normal --output DP-1 --off
+      ${pkgs.nitrogen}/bin/nitrogen --restore
+    '';
 
-  services.xserver.windowManager.xmonad = {
-    enable = true;
-    enableContribAndExtras = true;
-    extraPackages = with pkgs; (hs: [ hs.xmobar ]);
+    windowManager.xmonad = {
+      enable = true;
+      enableContribAndExtras = true;
+      extraPackages = with pkgs; (hs: [ hs.xmobar ]);
 
-    config = import ./xmonad.hs.nix { inherit pkgs; };
+      config = import ./xmonad.hs.nix { inherit pkgs; };
+    };
   };
 }

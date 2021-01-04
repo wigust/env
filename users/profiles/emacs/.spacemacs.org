@@ -3,10 +3,6 @@
 #+PROPERTY: header-args:emacs-lisp :tangle yes
 
 * Layers
-  :PROPERTIES:
-  :ID:       24fe628c-f4ac-4269-a843-d494a984582b
-  :END:
-
 #+begin_src emacs-lisp
 
   ;;; -*- mode: emacs-lisp -*-
@@ -25,6 +21,7 @@
        )
 #+end_src
 ** Layer list
+*** Basics
 #+begin_src emacs-lisp
     (setq-default
      dotspacemacs-configuration-layers
@@ -61,6 +58,16 @@
                               "~/org/agenda/home.org")
             )
        spacemacs-org
+       ;; exwm
+       (exwm :variables
+       exwm-enable-systray t
+       exwm-autostart-xdg-applications t
+       exwm-locking-command "i3lock -n"
+       exwm-install-logind-lock-handler t
+       exwm-terminal-command "alacritty"
+       exwm-autostart-environment '("DESKTOP_SESSION=kde" "KDE_SESSION_VERSION=5")
+       exwm-custom-init (lambda()
+                            (exwm/autostart-process "Dunst OSD" "dunst")))
        ;; LSP
        lsp
        ;; Languages & File types

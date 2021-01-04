@@ -6,118 +6,103 @@
     nixos.url = "nixpkgs/nixos-unstable";
     home.url = "github:rycee/home-manager";
     emacs.url = "github:nix-community/emacs-overlay";
-    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-20.09-darwin";
-    darwin.url = "github:lnl7/nix-darwin";
-    darwin.inputs.nixpkgs.follows = "nixpkgs-darwin";
+    hardware.url = "github:nixos/nixos-hardware";
+    devshell.url = "github:numtide/devshell";
+    flake-utils.url = "github:numtide/flake-utils";
+    nur.url = "github:nix-community/NUR";
   };
 
-  outputs = inputs@{ self, home, nixos, master, emacs, darwin, nixpkgs-darwin }:
+  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils }:
     let
-      inherit (builtins) attrNames attrValues readDir;
+      inherit (builtins) attrNames attrValues readDir elem pathExists filter;
+      inherit (flake-utils.lib) eachDefaultSystem mkApp;
       inherit (nixos) lib;
-      inherit (lib) removeSuffix recursiveUpdate genAttrs filterAttrs;
-      inherit (utils) pathsToImportedAttrs;
+      inherit (lib) all removeSuffix recursiveUpdate genAttrs filterAttrs
+        mapAttrs;
+      inherit (utils) pathsToImportedAttrs genPkgset overlayPaths modules
+        genPackages pkgImport;
 
       utils = import ./lib/utils.nix { inherit lib; };
 
-      platforms = [ "x86_64-linux" "x86_64-darwin" ];
+      system = "x86_64-linux";
 
-      forAllPlatforms = f: lib.genAttrs platforms (platform: f platform);
+      externOverlays = [
+        emacs.overlay
+        devshell.overlay
+        nur.overlay
+      ];
 
-      pkgsFor = pkgs:
-        forAllPlatforms (platform:
-          import pkgs {
-            system = platform;
-            overlays = attrValues self.overlays ++ [ emacs.overlay ];
-            config = {
-              allowUnfree = true;
-              # Only necessary because of hindent, shouldn`t be marked broken 
-              # though as an overlay should fix this????
-              allowBroken = true;
-              permittedInsecurePackages = [ "python2.7-cryptography-2.9.2" ];
-            };
+      externModules = [
+        home.nixosModules.home-manager
+      ];
+
+      pkgset =
+        let overlays =
+          (attrValues self.overlays)
+          ++ externOverlays
+          ++ [ self.overlay ];
+        in
+        genPkgset {
+          inherit master nixos overlays system;
+        };
+
+      outputs = {
+        nixosConfigurations =
+          import ./hosts (recursiveUpdate inputs {
+            inherit lib pkgset system utils externModules;
           });
 
-    in {
-      nixosConfigurations = import ./hosts (recursiveUpdate inputs rec {
-        inherit lib utils;
-        system = "x86_64-linux";
-        pkgset = {
-          osPkgs = (pkgsFor nixos)."${system}";
-          pkgs = (pkgsFor master)."${system}";
-        };
-      });
+        overlay = import ./pkgs;
 
-      darwinConfigurations = import ./hosts/darwin (recursiveUpdate inputs rec {
-        inherit (darwin) lib utils;
-        system = "x86_64-darwin";
-        pkgs = (pkgsFor nixpkgs-darwin)."${system}";
-      });
+        overlays = pathsToImportedAttrs overlayPaths;
 
-      devShell = forAllPlatforms (platform:
+        nixosModules = modules;
+      };
+    in
+    (eachDefaultSystem
+      (system':
         let
-          pkgs = (pkgsFor (if platform == "x86_64-darwin" then
-            darwin
-          else
-            nixos))."${platform}";
-        in pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [ git nixFlakes ];
+          pkgs' = pkgImport {
+            pkgs = master;
+            system = system';
+            overlays = [ devshell.overlay ];
+          };
 
-          NIX_CONF_DIR = let
-            current =
-              pkgs.lib.optionalString (builtins.pathExists /etc/nix/nix.conf)
-              (builtins.readFile /etc/nix/nix.conf);
-            nixConf = pkgs.writeTextDir "etc/nix.conf" ''
-              ${current}
-              experimental-features = nix-command flakes
-            '';
-          in "${nixConf}/etc";
+          packages' = genPackages {
+            overlay = self.overlay;
+            overlays = self.overlays;
+            pkgs = pkgs';
+          };
 
-          shellHook = ''
-            export NIX_PATH="$NIX_PATH:darwin=${inputs.darwin}"
-            rebuild () {
-              # _NIXOS_REBUILD_REEXEC is necessary to force nixos-rebuild to use the nix binary in $PATH
-              # otherwise the initial installation would fail
-              sudo --preserve-env=PATH --preserve-env=NIX_CONF_DIR _NIXOS_REBUILD_REEXEC=1 \
-                nixos-rebuild "$@"
-            }
-          '';
-        });
+          filtered = filterAttrs
+            (_: v:
+              (v.meta ? platforms)
+              && (elem system' v.meta.platforms)
+              && (
+                (all (dev: dev.meta ? platforms) v.buildInputs)
+                && (all (dev: elem system' dev.meta.platforms) v.buildInputs)
+              ))
+            packages';
+        in
+        {
+          devShell = import ./shell.nix {
+            pkgs = pkgs';
+          };
 
-      overlay = import ./pkgs;
+          apps =
+            let
+              validApps = attrNames (filterAttrs (_: drv: pathExists "${drv}/bin")
+                self.packages."${system}");
 
-      overlays = let
-        overlayDir = ./overlays;
-        fullPath = name: overlayDir + "/${name}";
-        overlayPaths = map fullPath (attrNames (readDir overlayDir));
-      in pathsToImportedAttrs overlayPaths;
+              validSystems = attrNames filtered;
 
-      packages = forAllPlatforms (platform:
-        let
-          pkgs = (pkgsFor (if platform == "x86_64-darwin" then
-            darwin
-          else
-            nixos))."${platform}";
-          packages = self.overlay pkgs pkgs;
-          overlays = lib.filterAttrs (n: v: n != "pkgs") self.overlays;
-          overlayPkgs = genAttrs (attrNames overlays)
-            (name: (overlays."${name}" pkgs pkgs)."${name}");
-        in recursiveUpdate packages overlayPkgs);
+              filterBins = filterAttrs
+                (n: _: elem n validSystems && elem n validApps)
+                filtered;
+            in
+            mapAttrs (_: drv: mkApp { inherit drv; }) filterBins;
 
-      nixosModules = let
-        # binary cache
-        cachix = import ./cachix.nix;
-        cachixAttrs = { inherit cachix; };
-
-        # modules
-        moduleList = import ./modules/list.nix;
-        modulesAttrs = pathsToImportedAttrs moduleList;
-
-        # profiles
-        profilesList = import ./profiles/list.nix;
-        profilesAttrs = { profiles = pathsToImportedAttrs profilesList; };
-
-      in recursiveUpdate (recursiveUpdate cachixAttrs modulesAttrs)
-      profilesAttrs;
-    };
+          packages =
+            filtered;
+        })) // outputs;
 }

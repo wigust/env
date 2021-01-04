@@ -5,4 +5,6 @@
 pkgs:
 with pkgs;
 [
+  discord-canary
+  discord
 ]

@@ -1,7 +1,8 @@
 { pkgs, ... }:
 let inherit (builtins) readFile;
-in {
-  imports = [ ../develop ./xmonad ../network ./im ];
+in
+{
+  imports = [ ../develop ../network ./im ];
 
   hardware.opengl.enable = true;
   hardware.opengl.driSupport = true;
@@ -9,7 +10,7 @@ in {
 
   boot = {
 
-    kernelPackages = pkgs.linuxPackages_5_8;
+    kernelPackages = pkgs.linuxPackages_5_9;
 
     tmpOnTmpfs = true;
 
@@ -37,8 +38,6 @@ in {
     systemPackages = with pkgs; [
       breeze-gtk
       dzen2
-      gnome3.networkmanagerapplet
-      pulsemixer
       dmenu
       nitrogen
       dunst
@@ -46,10 +45,7 @@ in {
       arandr
       pavucontrol
       xmobar
-      chromium
-      libreoffice
-      spotify
-      bitwig-studio3
+      networkmanager
     ];
   };
 
@@ -57,16 +53,20 @@ in {
 
   services.xserver = {
     enable = true;
-
-    displayManager.lightdm = {
-      enable = true;
-      greeters.pantheon.enable = true;
-    };
-    desktopManager.xterm.enable = false;
-    displayManager.defaultSession = "none+xmonad";
     displayManager.sessionCommands = ''
       ${pkgs.xorg.xrandr}/bin/xrandr --output DVI-D-0 --primary --mode 1920x1080 --pos 1920x0 --rotate normal --output HDMI-0 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-0 --mode 1920x1080 --pos 3840x0 --rotate normal --output DP-1 --off
       ${pkgs.nitrogen}/bin/nitrogen --restore
     '';
+    displayManager.lightdm.greeters.gtk = {
+      enable = true;
+      theme = {
+        package = pkgs.breeze-gtk;
+        name = "Breeze";
+      };
+      iconTheme = {
+        package = pkgs.breeze-icons;
+        name = "Breeze";
+      };
+    };
   };
 }
