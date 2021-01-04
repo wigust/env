@@ -1,8 +1,8 @@
 {
   imports = [
-    #./networkmanager
+    ./networkmanager
+    ./tailscale.nix
     # ./adblocking.nix
     # ./stubby.nix
-    ./tailscale.nix
   ];
 }
