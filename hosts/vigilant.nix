@@ -33,4 +33,12 @@
   nix.maxJobs = lib.mkDefault 16;
   environment.systemPackages = with pkgs; [ mesa ];
   services.xserver.videoDrivers = [ "mesa" ];
+
+  services.xserver.displayManager.sessionCommands = ''
+      ${pkgs.nitrogen}/bin/nitrogen --set-auto=${../assets/wallpaper.png} --head=0
+      ${pkgs.xorg.xmodmap}/bin/xmodmap ${pkgs.writeText "xkb-layout" ''
+        keysym Caps_Lock = Control_L + Shift_L + Alt_L
+        remove Lock = Caps_Lock
+      ''}
+  '';
 }
