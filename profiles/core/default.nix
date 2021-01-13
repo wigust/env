@@ -27,7 +27,7 @@
   };
 
   fonts = {
-    fontDir.enable = true;
+    enableFontDir = true;
     enableDefaultFonts = true;
     fonts = with pkgs; [
       corefonts

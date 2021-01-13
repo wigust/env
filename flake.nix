@@ -3,8 +3,8 @@
 
   inputs = {
     master.url = "nixpkgs/master";
-    nixos.url = "nixpkgs/nixos-unstable";
-    home.url = "github:rycee/home-manager";
+    nixos.url = "nixpkgs/nixos-20.09";
+    home.url = "github:rycee/home-manager/release-20.09";
     emacs.url = "github:nix-community/emacs-overlay";
     hardware.url = "github:nixos/nixos-hardware";
     devshell.url = "github:numtide/devshell";
