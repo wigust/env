@@ -22,6 +22,7 @@
     pass
     tokei
     wget
+    ormolu
 
     # IDEs and editors
     # (
