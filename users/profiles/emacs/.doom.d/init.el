@@ -1,3 +1,6 @@
-(doom! :lang
+(doom! 
+       :ui
+       doom
+       :lang
        python
        haskell)
