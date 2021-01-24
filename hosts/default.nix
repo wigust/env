@@ -2,18 +2,19 @@
 , lib
 , nixos
 , master
-, pkgset
+, osPkgs
+, unstablePkgs
 , self
 , system
 , utils
 , hardware
 , externModules
+, homeModules
 , ...
 }:
 let
   inherit (utils) recImport;
   inherit (builtins) attrValues removeAttrs;
-  inherit (pkgset) osPkgs unstablePkgs;
   inherit (lib) traceVal;
 
   unstableModules = [ ];
@@ -24,6 +25,8 @@ let
 
       specialArgs =
         {
+          inherit homeModules;
+          hardware = hardware.nixosModules;
           unstableModulesPath = "${master}/nixos/modules";
         };
 
@@ -42,7 +45,7 @@ let
             # the `home-manager.users` submodule for additional functionality.
             options.home-manager.users = lib.mkOption {
               type = lib.types.attrsOf (lib.types.submoduleWith {
-                modules = [ ];
+                modules = [];
                 # Makes specialArgs available to Home Manager modules as well.
                 specialArgs = specialArgs // {
                   # Allow accessing the parent NixOS configuration.
@@ -54,6 +57,8 @@ let
           global = {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+
+            hardware.enableRedistributableFirmware = lib.mkDefault true;
 
             networking.hostName = hostName;
             nix.nixPath = let path = toString ../.; in
@@ -78,25 +83,7 @@ let
             system.stateVersion = "20.09";
           };
 
-          overrides = {
-            nixpkgs.overlays =
-              let
-                override = import ../pkgs/override.nix unstablePkgs;
-
-                overlay = pkg: final: prev: {
-                  "${pkg.pname}" = pkg;
-                };
-              in
-              map overlay override;
-          };
-
           local = import "${toString ./.}/${hostName}.nix";
-
-          localHardware =
-            let
-              hardwarePath = "${toString ./.}/${hostName}.hardware.nix";
-            in
-            if builtins.pathExists hardwarePath then import hardwarePath { hardware = hardware.nixosModules; } else [ ];
 
           # Everything in `./modules/list.nix`.
           flakeModules =
@@ -108,9 +95,8 @@ let
           global
           local
           hm-nixos-as-super
-          overrides
           modOverrides
-        ] ++ externModules ++ localHardware;
+        ] ++ externModules;
 
     };
 

@@ -1,0 +1,3 @@
+(doom! :lang
+       python
+       haskell)

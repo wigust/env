@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, homeModules, ... }:
 let inherit (lib) fileContents;
 in
 {
@@ -22,7 +22,7 @@ in
         ../profiles/emacs
         ../profiles/xmonad
         ../profiles/zsh
-      ];
+      ] ++ homeModules;
       home.file.".gitconfig".source = ../../secrets/dotfiles/home.gitconfig;
     };
 

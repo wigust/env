@@ -1,6 +1,5 @@
 {
-  description = "A highly structured configuration database.";
-
+  # nix flake update --update-input <input>
   inputs = {
     master.url = "nixpkgs/master";
     nixos.url = "nixpkgs/nixos-20.09";
@@ -8,101 +7,88 @@
     emacs.url = "github:nix-community/emacs-overlay";
     hardware.url = "github:nixos/nixos-hardware";
     devshell.url = "github:numtide/devshell";
-    flake-utils.url = "github:numtide/flake-utils";
+    flake-utils.url = "github:numtide/flake-utils/flatten-tree-system";
     nur.url = "github:nix-community/NUR";
+    nix-doom-emacs.url = "github:vlaci/nix-doom-emacs";
   };
 
-  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils }:
+  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, nix-doom-emacs }:
     let
       inherit (builtins) attrNames attrValues readDir elem pathExists filter;
-      inherit (flake-utils.lib) eachDefaultSystem mkApp;
+      inherit (flake-utils.lib) flattenTreeSystem eachDefaultSystem;
       inherit (nixos) lib;
       inherit (lib) all removeSuffix recursiveUpdate genAttrs filterAttrs
         mapAttrs;
-      inherit (utils) pathsToImportedAttrs genPkgset overlayPaths modules
-        genPackages pkgImport;
+      inherit (utils) pathsToImportedAttrs overlayPaths modules genPackages pkgImport;
 
       utils = import ./lib/utils.nix { inherit lib; };
-
-      system = "x86_64-linux";
 
       externOverlays = [
         emacs.overlay
         devshell.overlay
         nur.overlay
       ];
+      externModules = [ home.nixosModules.home-manager ];
+      homeModules = [ nix-doom-emacs.hmModule ];
 
-      externModules = [
-        home.nixosModules.home-manager
-      ];
-
-      pkgset =
-        let overlays =
-          (attrValues self.overlays)
-          ++ externOverlays
-          ++ [ self.overlay ];
-        in
-        genPkgset {
-          inherit master nixos overlays system;
-        };
-
-      outputs = {
-        nixosConfigurations =
-          import ./hosts (recursiveUpdate inputs {
-            inherit lib pkgset system utils externModules;
-          });
-
-        overlay = import ./pkgs;
-
-        overlays = pathsToImportedAttrs overlayPaths;
-
-        nixosModules = modules;
-      };
-    in
-    (eachDefaultSystem
-      (system':
+      pkgs' = unstable:
         let
-          pkgs' = pkgImport {
-            pkgs = master;
-            system = system';
-            overlays = [ devshell.overlay ];
-          };
-
-          packages' = genPackages {
-            overlay = self.overlay;
-            overlays = self.overlays;
-            pkgs = pkgs';
-          };
-
-          filtered = filterAttrs
-            (_: v:
-              (v.meta ? platforms)
-              && (elem system' v.meta.platforms)
-              && (
-                (all (dev: dev.meta ? platforms) v.buildInputs)
-                && (all (dev: elem system' dev.meta.platforms) v.buildInputs)
-              ))
-            packages';
+          override = import ./pkgs/override.nix;
+          overlays = (attrValues self.overlays)
+                     ++ externOverlays
+                     ++ [ self.overlay (override unstable) ];
         in
-        {
-          devShell = import ./shell.nix {
-            pkgs = pkgs';
+          pkgImport nixos overlays;
+
+      unstable' = pkgImport master [ ];
+
+      osSystem = "x86_64-linux";
+      outputs =
+        let
+          system = osSystem;
+          unstablePkgs = unstable' system;
+          osPkgs = pkgs' unstablePkgs system;
+        in
+          {
+            nixosConfigurations =
+              import ./hosts (recursiveUpdate inputs {
+                inherit lib osPkgs unstablePkgs system utils externModules homeModules;
+              });
+
+            homeConfigurations =
+              builtins.mapAttrs
+                (_: config: config.config.home-manager.users)
+                self.nixosConfigurations;
+
+            overlay = import ./pkgs;
+
+            overlays = pathsToImportedAttrs overlayPaths;
+
+            nixosModules = modules;
           };
+    in
+          recursiveUpdate
+            (eachDefaultSystem
+              (system:
+                let
+                  unstablePkgs = unstable' system;
+                  pkgs = pkgs' unstablePkgs system;
 
-          apps =
-            let
-              validApps = attrNames (filterAttrs (_: drv: pathExists "${drv}/bin")
-                self.packages."${system}");
+                  packages = flattenTreeSystem system
+                    (genPackages {
+                      inherit self pkgs;
+                    });
+                in
+                  {
+                    packages = packages //
+                               utils.genHomeActivationPackages
+                                 self.homeConfigurations;
 
-              validSystems = attrNames filtered;
-
-              filterBins = filterAttrs
-                (n: _: elem n validSystems && elem n validApps)
-                filtered;
-            in
-            mapAttrs (_: drv: mkApp { inherit drv; }) filterBins;
-
-          packages =
-            filtered;
-        })) // outputs;
-}
+                    devShell = import ./shell.nix {
+                      inherit pkgs;
+                    };
+                  }
+              )
+            )
+            outputs;
+      }

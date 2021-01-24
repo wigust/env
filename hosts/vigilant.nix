@@ -1,9 +1,14 @@
 { lib, config, pkgs, hardware, ... }: {
 
-  imports = [
+  imports = with hardware; [
     ../users/ben
     ../profiles/graphical
     ../profiles/graphical/xmonad
+    # Hardware
+    lenovo-thinkpad-t14s
+    common-cpu-amd
+    common-pc
+    common-pc-ssd
   ];
 
   boot = {

@@ -1,11 +1,16 @@
 { lib, config, pkgs, hardware, ... }:
 {
 
-  imports = [
+  imports = with hardware; [
     ../users/ben
     ../profiles/graphical/games
     ../profiles/graphical
     ../profiles/graphical/xmonad
+    # Hardware
+    common-pc
+    common-pc-ssd
+    common-gpu-nvidia
+    common-cpu-amd
   ];
 
   boot = {
