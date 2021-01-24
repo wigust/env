@@ -21,10 +21,18 @@ in
   environment = {
 
     etc = {
+      "xdg/gtk-2.0/gtkrc" = {
+        text = ''
+          gtk-theme-name = "Breeze"
+          gtk-key-theme-name = "Breeze"
+        '';
+        mode = "444";
+      };
       "xdg/gtk-3.0/settings.ini" = {
         text = ''
           [Settings]
-          gtk-theme-name=Breeze
+          gtk-theme-name = Breeze
+          gtk-key-theme-name = Breeze
         '';
         mode = "444";
       };
@@ -33,6 +41,7 @@ in
     sessionVariables = {
       # Theme settings
       QT_QPA_PLATFORMTHEME = "gtk2";
+      XDG_DATA_DIRS = [ "/etc/xdg" ];
     };
 
     systemPackages = with pkgs; [
@@ -46,6 +55,8 @@ in
       pavucontrol
       xmobar
       networkmanager
+      gtk3
+      gtk2
     ];
   };
 
