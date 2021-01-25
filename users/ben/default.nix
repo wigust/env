@@ -1,4 +1,4 @@
-{ lib, pkgs, homeModules, ... }:
+{ lib, pkgs, ... }:
 let inherit (lib) fileContents;
 in
 {
@@ -9,7 +9,7 @@ in
   ];
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.ben = { home, config, ... }:
+  home-manager.users.ben = { home, config, homeModules, ... }:
     with home; {
       imports = [
         ../profiles/alacritty

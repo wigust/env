@@ -2,18 +2,16 @@
 , lib
 , nixos
 , master
-, osPkgs
-, unstablePkgs
+, pkgs
 , self
 , system
-, utils
 , hardware
 , externModules
 , homeModules
 , ...
 }:
 let
-  inherit (utils) recImport;
+  inherit (lib.flk) recImport;
   inherit (builtins) attrValues removeAttrs;
   inherit (lib) traceVal;
 
@@ -25,7 +23,6 @@ let
 
       specialArgs =
         {
-          inherit homeModules;
           hardware = hardware.nixosModules;
           unstableModulesPath = "${master}/nixos/modules";
         };
@@ -45,9 +42,10 @@ let
             # the `home-manager.users` submodule for additional functionality.
             options.home-manager.users = lib.mkOption {
               type = lib.types.attrsOf (lib.types.submoduleWith {
-                modules = [];
+                modules = [ ];
                 # Makes specialArgs available to Home Manager modules as well.
                 specialArgs = specialArgs // {
+                  inherit homeModules;
                   # Allow accessing the parent NixOS configuration.
                   super = config;
                 };
@@ -65,12 +63,11 @@ let
               [
                 "nixos-unstable=${master}"
                 "nixpkgs=${nixos}"
-                "nixos-config=${path}/configuration.nix"
                 "nixpkgs-overlays=${path}/overlays"
                 "home-manager=${home}"
               ];
 
-            nixpkgs.pkgs = osPkgs;
+            nixpkgs = { inherit pkgs; };
 
             nix.registry = {
               master.flake = master;

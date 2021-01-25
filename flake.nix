@@ -10,18 +10,16 @@
     flake-utils.url = "github:numtide/flake-utils/flatten-tree-system";
     nur.url = "github:nix-community/NUR";
     nix-doom-emacs.url = "github:vlaci/nix-doom-emacs";
+    mobile.url = "github:NixOS/mobile-nixos";
+    mobile.flake = false;
   };
 
-  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, nix-doom-emacs }:
+  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, nix-doom-emacs, mobile }:
     let
-      inherit (builtins) attrNames attrValues readDir elem pathExists filter;
-      inherit (flake-utils.lib) flattenTreeSystem eachDefaultSystem;
-      inherit (nixos) lib;
-      inherit (lib) all removeSuffix recursiveUpdate genAttrs filterAttrs
-        mapAttrs;
-      inherit (utils) pathsToImportedAttrs overlayPaths modules genPackages pkgImport;
-
-      utils = import ./lib/utils.nix { inherit lib; };
+      inherit (builtins) attrValues;
+      inherit (flake-utils.lib) eachDefaultSystem flattenTreeSystem;
+      inherit (nixos.lib) recursiveUpdate;
+      inherit (self.lib) overlays nixosModules genPackages pkgImport genHomeActivationPackages;
 
       externOverlays = [
         emacs.overlay
@@ -31,64 +29,75 @@
       externModules = [ home.nixosModules.home-manager ];
       homeModules = [ nix-doom-emacs.hmModule ];
 
-      pkgs' = unstable:
-        let
-          override = import ./pkgs/override.nix;
-          overlays = (attrValues self.overlays)
-                     ++ externOverlays
-                     ++ [ self.overlay (override unstable) ];
-        in
-          pkgImport nixos overlays;
-
-      unstable' = pkgImport master [ ];
-
-      osSystem = "x86_64-linux";
       outputs =
         let
-          system = osSystem;
-          unstablePkgs = unstable' system;
-          osPkgs = pkgs' unstablePkgs system;
+          system = "x86_64-linux";
+          pkgs = self.legacyPackages.${system};
         in
-          {
-            nixosConfigurations =
-              import ./hosts (recursiveUpdate inputs {
-                inherit lib osPkgs unstablePkgs system utils externModules homeModules;
+        {
+          inherit nixosModules overlays;
+
+          nixosConfigurations =
+            import ./hosts
+              (recursiveUpdate inputs {
+                inherit pkgs externModules system homeModules;
+                inherit (pkgs) lib;
               });
 
-            homeConfigurations =
-              builtins.mapAttrs
-                (_: config: config.config.home-manager.users)
-                self.nixosConfigurations;
+          homeConfigurations =
+            builtins.mapAttrs
+              (_: config: config.config.home-manager.users)
+              self.nixosConfigurations;
 
-            overlay = import ./pkgs;
+          overlay = import ./pkgs;
 
-            overlays = pathsToImportedAttrs overlayPaths;
-
-            nixosModules = modules;
+          lib = import ./lib {
+            inherit (nixos) lib;
           };
+        };
     in
-          recursiveUpdate
-            (eachDefaultSystem
-              (system:
-                let
-                  unstablePkgs = unstable' system;
-                  pkgs = pkgs' unstablePkgs system;
+    recursiveUpdate
+      (eachDefaultSystem
+        (system:
+          let
+            unstable = pkgImport master [ ] system;
 
-                  packages = flattenTreeSystem system
-                    (genPackages {
-                      inherit self pkgs;
-                    });
-                in
-                  {
-                    packages = packages //
-                               utils.genHomeActivationPackages
-                                 self.homeConfigurations;
-
-                    devShell = import ./shell.nix {
-                      inherit pkgs;
+            pkgs =
+              let
+                override = import ./pkgs/override.nix;
+                overlays = [
+                  (override unstable)
+                  self.overlay
+                  (final: prev: {
+                    lib = (prev.lib or { }) // {
+                      inherit (nixos.lib) nixosSystem;
+                      flk = self.lib;
+                      utils = flake-utils.lib;
                     };
-                  }
-              )
-            )
-            outputs;
-      }
+                  })
+                ]
+                ++ (attrValues self.overlays)
+                ++ externOverlays;
+              in
+              pkgImport nixos overlays system;
+
+            packages = flattenTreeSystem system
+              (genPackages {
+                inherit self pkgs;
+              });
+          in
+          {
+            packages = packages //
+              genHomeActivationPackages
+                self.homeConfigurations;
+
+            devShell = import ./shell {
+              inherit pkgs nixos;
+            };
+
+            legacyPackages = pkgs;
+          }
+        )
+      )
+      outputs;
+}

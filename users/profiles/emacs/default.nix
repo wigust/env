@@ -20,10 +20,7 @@
     samba
 
     ispell
-    aspell
-    hunspell
-    aspellDicts.en
-    aspellDicts.en-computers
+    (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
 
     sqlite
   ];

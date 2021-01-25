@@ -1,21 +1,21 @@
 {
-    "nodes": {
-      "devshell": {
-          "locked": {
-              "lastModified": 1607956014,
-              "narHash": "sha256-kcmh1ZO56GFYStDeM2VngJSvx/e8aKhFSYqLwfiq+Es=",
-              "owner": "numtide",
-              "repo": "devshell",
-              "rev": "17f46732ce299daa2977be2978f60d258c2d1b41",
-              "type": "github"
-          },
-          "original": {
-              "owner": "numtide",
-              "repo": "devshell",
-              "type": "github"
-          }
+  "nodes": {
+    "devshell": {
+      "locked": {
+        "lastModified": 1607956014,
+        "narHash": "sha256-kcmh1ZO56GFYStDeM2VngJSvx/e8aKhFSYqLwfiq+Es=",
+        "owner": "numtide",
+        "repo": "devshell",
+        "rev": "17f46732ce299daa2977be2978f60d258c2d1b41",
+        "type": "github"
       },
-      "doom-emacs": {
+      "original": {
+        "owner": "numtide",
+        "repo": "devshell",
+        "type": "github"
+      }
+    },
+    "doom-emacs": {
       "flake": false,
       "locked": {
         "lastModified": 1611017958,
@@ -239,6 +239,22 @@
         "type": "indirect"
       }
     },
+    "mobile": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1610570855,
+        "narHash": "sha256-Kj130Baw+5NBSJBOD7YXrxbaRaXy3XavFZeJd/4pEAc=",
+        "owner": "NixOS",
+        "repo": "mobile-nixos",
+        "rev": "1e6ba0019fd5d888ea874d8dd1147b0a842e0f3b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "mobile-nixos",
+        "type": "github"
+      }
+    },
     "nix-doom-emacs": {
       "inputs": {
         "doom-emacs": "doom-emacs",
@@ -453,6 +469,7 @@
         "hardware": "hardware",
         "home": "home",
         "master": "master",
+        "mobile": "mobile",
         "nix-doom-emacs": "nix-doom-emacs",
         "nixos": "nixos",
         "nur": "nur"

@@ -24,6 +24,10 @@
       nixFlakes
     ];
 
+    shellAliases = {
+      # fix nixos-option
+      nixos-option = "nixos-option -I nixpkgs=${toString ../../compat}";
+    };
   };
 
   fonts = {
@@ -47,6 +51,7 @@
       sansSerif = [ "DejaVu Sans" ];
     };
   };
+
 
   nix = {
     autoOptimiseStore = true;
