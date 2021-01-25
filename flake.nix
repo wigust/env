@@ -9,12 +9,10 @@
     devshell.url = "github:numtide/devshell";
     flake-utils.url = "github:numtide/flake-utils/flatten-tree-system";
     nur.url = "github:nix-community/NUR";
-    nix-doom-emacs.url = "github:vlaci/nix-doom-emacs";
-    mobile.url = "github:NixOS/mobile-nixos";
-    mobile.flake = false;
+    nix-doom-emacs.url = "github:vlaci/nix-doom-emacs/fix-gccemacs";
   };
 
-  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, nix-doom-emacs, mobile }:
+  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, nix-doom-emacs }:
     let
       inherit (builtins) attrValues;
       inherit (flake-utils.lib) eachDefaultSystem flattenTreeSystem;

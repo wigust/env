@@ -19,7 +19,6 @@
     initrd.availableKernelModules =
       [ "nvme" "ehci_pci" "xhci_pci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
     kernelModules = [ "kvm-amd" ];
-    supportedFilesystems = [ ];
   };
   fileSystems."/" =
     {
@@ -40,19 +39,17 @@
   environment.systemPackages = with pkgs; [ mesa ];
   services.xserver.videoDrivers = [ "mesa" ];
 
-  services.xserver.displayManager.sessionCommands = ''
-    ${pkgs.nitrogen}/bin/nitrogen --set-auto=${../assets/wallpaper.png} --head=0
-  '';
-
   programs.light.enable = true;
   services.actkbd = {
     enable = true;
-    bindings = [
-      # Capslock
-      { keys = [ 58 ]; events = [ "key" ]; attributes = [ "key(29)" "key(42)" "key(56)" "rel(29)" "rel(42)" "rel(56)" "noexec" ]; }
-      # Brightnessaqw
-      { keys = [ 224 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/light -U 10"; }
-      { keys = [ 225 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/light -A 10"; }
-    ];
+    bindings =
+      let
+        increment = 5;
+      in
+      [
+        # Brightness
+        { keys = [ 224 ]; events = [ "key" ]; command = "${pkgs.light}/bin/light -U ${toString increment}"; }
+        { keys = [ 225 ]; events = [ "key" ]; command = "${pkgs.light}/bin/light -A ${toString increment}"; }
+      ];
   };
 }

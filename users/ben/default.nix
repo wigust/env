@@ -23,7 +23,11 @@ in
         ../profiles/xmonad
         ../profiles/zsh
       ] ++ homeModules;
-      home.file.".gitconfig".source = ../../secrets/dotfiles/home.gitconfig;
+
+      home.file = {
+        ".gitconfig".source = ../../secrets/dotfiles/home.gitconfig;
+        ".background-image".source = ../../assets/wallpaper.png;
+      };
     };
 
   users.users.ben = {

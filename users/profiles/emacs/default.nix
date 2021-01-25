@@ -1,6 +1,10 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
-  home.file = {
+  home.file = { };
+
+  services.emacs = {
+    enable = true;
+    client.enable = true;
   };
 
   programs.doom-emacs = {
@@ -11,7 +15,6 @@
 
   home.packages = with pkgs; [
     ripgrep
-    emacs-all-the-icons-fonts
     fd
 
     pandoc

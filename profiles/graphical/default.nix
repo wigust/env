@@ -70,6 +70,8 @@ in
       remove Lock = Caps_Lock
     ''}";
 
+    desktopManager.wallpaper.mode = "fill";
+
     displayManager.lightdm.greeters.gtk = {
       enable = true;
       theme = {

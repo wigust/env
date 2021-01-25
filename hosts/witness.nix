@@ -44,10 +44,9 @@
   nix.maxJobs = lib.mkDefault 16;
   hardware.nvidia.prime.offload.enable = false;
 
-  services.xserver.displayManager.sessionCommands = ''
-      ${pkgs.xorg.xrandr}/bin/xrandr --output DVI-D-0 --primary --mode 1920x1080 --pos 1920x0 --rotate normal --output HDMI-0 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-0 --mode 1920x1080 --pos 3840x0 --rotate normal --output DP-1 --off
-      ${pkgs.nitrogen}/bin/nitrogen --set-auto=${../assets/wallpaper.png} --head=0
-      ${pkgs.nitrogen}/bin/nitrogen --set-auto=${../assets/wallpaper.png} --head=1
-      ${pkgs.nitrogen}/bin/nitrogen --set-auto=${../assets/wallpaper.png} --head=2
-    '';
+  services.xserver.displayManager.setupCommands = ''
+    ${pkgs.xlibs.xrandr}/bin/xrandr --output HDMI-0 --left-of DVI-D-0 
+    ${pkgs.xlibs.xrandr}/bin/xrandr --output DVI-D-0 --primary
+    ${pkgs.xlibs.xrandr}/bin/xrandr --output DP-0 --right-of DVI-D-0 
+  '';
 }

@@ -2,7 +2,7 @@
   imports = [ ];
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.ben = { home, config, ... }:
+  home-manager.users.ben = { home, config, homeModules, ... }:
     with home; {
       imports = [
         ../profiles/alacritty
@@ -13,7 +13,7 @@
         ../profiles/develop/python
         ../profiles/emacs
         ../profiles/zsh
-      ];
+      ] ++ homeModules;
 
       home.file.".gitconfig".source = ../../secrets/dotfiles/work.gitconfig;
     };
