@@ -15,7 +15,7 @@ in
 
       python = pkgs.python38Full.withPackages packages;
     in
-    with pkgs.python38Packages; [ python poetry black python-language-server ];
+    with pkgs.python38Packages; [ python poetry black python-language-server pkgs.nodePackages.pyright ];
   home.sessionVariables = {
     PYTHONSTARTUP =
       let

@@ -2,15 +2,15 @@
 {
 
   imports = with hardware; [
-    ../users/ben
-    ../profiles/graphical/games
     ../profiles/graphical
+    ../profiles/graphical/games
     ../profiles/graphical/xmonad
+    ../users/ben
     # Hardware
+    common-cpu-amd
+    common-gpu-nvidia
     common-pc
     common-pc-ssd
-    common-gpu-nvidia
-    common-cpu-amd
   ];
 
   boot = {

@@ -6,7 +6,9 @@ pkgs: final: prev:
 {
   inherit (pkgs)
     discord-canary
-    discord;
+    discord
+    emacsGcc
+    emacs;
 
   haskellPackages = prev.haskellPackages.override {
     overrides = hfinal: hprev:
