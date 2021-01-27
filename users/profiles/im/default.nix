@@ -1,5 +1,5 @@
 { pkgs, ... }: {
-  environment.systemPackages = with pkgs; [
+  home.packages = with pkgs; [
     discord-canary
     element-desktop
     signal-desktop

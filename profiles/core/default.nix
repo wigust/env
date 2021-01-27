@@ -1,5 +1,4 @@
 { config, lib, pkgs, ... }: {
-
   imports = [ ../../local/locale.nix ];
 
   environment = {
@@ -23,10 +22,11 @@
       whois
       nixFlakes
     ];
-
+    # NixOS specific shell aliases
     shellAliases = {
       # fix nixos-option
       nixos-option = "nixos-option -I nixpkgs=${toString ../../compat}";
+      rebuild = "sudo nixos-rebuild switch --flake $HOME/env";
     };
   };
 

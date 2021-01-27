@@ -147,7 +147,24 @@
         "home": "home",
         "master": "master",
         "nixos": "nixos",
-        "nur": "nur"
+        "nur": "nur",
+        "straight": "straight"
+      }
+    },
+    "straight": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1592852066,
+        "narHash": "sha256-IwmBDtGv7GamiwCG+awZN6VgtHqJElkv/ic0VrVXAkI=",
+        "owner": "vlaci",
+        "repo": "nix-straight.el",
+        "rev": "9e6f7d71760b997b09d9bd3046257bc9ec17265b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "vlaci",
+        "repo": "nix-straight.el",
+        "type": "github"
       }
     }
   },

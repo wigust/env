@@ -1,66 +1,50 @@
 { pkgs, ... }:
-let inherit (builtins) readFile;
-in
 {
-  imports = [ ../develop ../network ./im ];
-
-  hardware.opengl.enable = true;
-  hardware.opengl.driSupport = true;
-  hardware.pulseaudio.enable = true;
-
-  boot = {
-
-    kernelPackages = pkgs.linuxPackages_5_9;
-
-    tmpOnTmpfs = true;
-
-    kernel.sysctl."kernel.sysrq" = 1;
-
+  hardware.opengl = {
+    enable = true;
+    driSupport = true;
   };
 
-  environment = {
+  sound.enable = true;
 
+  hardware.pulseaudio.enable = true;
+
+  environment = {
+    systemPackages = with pkgs; [
+      arandr
+      gtk2
+      gtk3
+      pavucontrol
+    ];
+
+    sessionVariables = {
+      # Fix java apps being broke in a tiling WM
+      "_JAVA_AWT_WM_NONREPARENTING" = "1";
+      # Theme settings
+      QT_QPA_PLATFORMTHEME = "gtk2";
+      XDG_DATA_DIRS = [ "/etc/xdg" ];
+    };
     etc = {
       "xdg/gtk-2.0/gtkrc" = {
         text = ''
-          gtk-theme-name = "Breeze"
-          gtk-key-theme-name = "Breeze"
+          gtk-theme-name = "Breeze-Dark"
+          gtk-key-theme-name = "Breeze-Dark"
         '';
         mode = "444";
       };
       "xdg/gtk-3.0/settings.ini" = {
         text = ''
           [Settings]
-          gtk-theme-name = Breeze
-          gtk-key-theme-name = Breeze
+          gtk-theme-name = Breeze-Dark
+          gtk-key-theme-name = Breeze-Dark
         '';
         mode = "444";
       };
     };
-
-    sessionVariables = {
-      # Theme settings
-      QT_QPA_PLATFORMTHEME = "gtk2";
-      XDG_DATA_DIRS = [ "/etc/xdg" ];
-    };
-
-    systemPackages = with pkgs; [
-      breeze-gtk
-      dzen2
-      dmenu
-      nitrogen
-      dunst
-      rofi
-      arandr
-      pavucontrol
-      xmobar
-      networkmanager
-      gtk3
-      gtk2
-    ];
   };
 
   services.gnome3.gnome-keyring.enable = true;
+
 
   services.xserver = {
     enable = true;
@@ -76,12 +60,13 @@ in
       enable = true;
       theme = {
         package = pkgs.breeze-gtk;
-        name = "Breeze";
+        name = "Breeze-Dark";
       };
       iconTheme = {
         package = pkgs.breeze-icons;
-        name = "Breeze";
+        name = "breeze-dark";
       };
+      indicators = [ "~host" "~spacer" "~clock" "~spacer" "~session" "~spacer" "~power" ];
     };
   };
 }

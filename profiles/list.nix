@@ -1,19 +1,14 @@
 [
   ./core
-  ./develop
-  ./develop/python
-  ./develop/tmux
-  ./develop/nix
   ./graphical
+  ./graphical/exwm
   ./graphical/games
-  ./graphical/im
-  ./graphical/plex.nix
   ./graphical/xmonad
   ./network
   ./network/adblocking.nix
   ./network/networkmanager
-  ./network/syncthing
   ./network/stubby.nix
+  ./network/syncthing
   ./ssh
   ./virt
 ]

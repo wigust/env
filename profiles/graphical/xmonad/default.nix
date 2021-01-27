@@ -1,7 +1,11 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
-    xclip
+    dmenu
     dunst
+    dzen2
+    rofi
+    xclip
+    xmobar
   ];
   services.xserver = {
     displayManager.defaultSession = "none+xmonad";

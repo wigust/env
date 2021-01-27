@@ -1,6 +1,67 @@
 { pkgs, config, lib, ... }:
+let
+  tangle = file:
+    let
+      inFilename = baseNameOf file;
+      filename = "${lib.removeSuffix ".org" inFilename}.el";
+    in
+    pkgs.stdenv.mkDerivation
+      {
+        name = filename;
+        buildInputs = [ pkgs.emacsGcc ];
+        phases = [ "installPhase" ];
+        installPhase = ''
+          runHook preInstall
+          cp ${file} ${inFilename}
+          emacs -q --batch -l ob-tangle --eval "(org-babel-tangle-file \"${inFilename}\")"
+          cp ${filename} $out
+          runHook postInstall
+        '';
+      };
+  epkgs = pkgs.emacsPackagesFor pkgs.emacsGcc;
+  straight = pkgs.nix-straight {
+    emacsPackages = epkgs;
+    emacsInitFile = tangle ./.emacs.d/init.org;
+    emacsArgs = [
+      "--"
+      "install"
+    ];
+  };
+  fmt = {
+    reset = ''\\033[0m'';
+    bold = ''\\033[1m'';
+    red = ''\\033[31m'';
+    green = ''\\033[32m'';
+  };
+  emacsEnv = straight.emacsEnv {
+    straightDir = "$out/straight";
+    packages = straight.packageList (super: {
+      phases = [ "installPhase" ];
+      preInstall = ''
+        # Fix gccEmacs
+        export HOME=$(mktemp -d)
+      '';
+      postInstall = ''
+        # If gccEmacs or anything would write in $HOME, fail the build.
+        if [[ -z "$(find $HOME -maxdepth 0 -empty)" ]]; then
+          printf "${fmt.red}${fmt.bold}ERROR:${fmt.reset} "
+          printf "${fmt.red}doom-emacs build resulted in files being written in "'$HOME'" of the build sandbox.\n"
+          printf "Contents of "'$HOME'":\n"
+          find $HOME
+          printf ${fmt.reset}
+          exit 33
+        fi
+      '';
+    });
+  };
+in
 {
-  home.file = { };
+  home.file = {
+    ".emacs.d" = {
+      source = emacsEnv;
+      recursive = true;
+    };
+  };
 
   services.emacs = {
     enable = true;
@@ -9,33 +70,7 @@
 
   programs.emacs = {
     enable = true;
-    package =
-      (pkgs.emacsWithPackagesFromUsePackage {
-        config = ./.emacs.d/init.org;
-
-        package = pkgs.emacsGcc;
-        alwaysEnsure = true;
-        alwaysTangle = true;
-        extraEmacsPackages = epkgs: [
-          (epkgs.melpaBuild {
-            pname = "ligature";
-            ename = "ligature";
-            version = "1";
-            recipe = builtins.toFile "recipe" ''
-              (ligature :fetcher github
-              :repo "mickeynp/ligature.el")
-            '';
-            src = pkgs.fetchFromGitHub {
-              owner = "mickeynp";
-              repo = "ligature.el";
-              rev = "c830b9d74dcf4ff08e6f19cc631d924ce47e2600";
-              hash = "sha256-cFaXfL7qy1ocjTsQdWxciojTKNTjc6jVUkdvIN2AiKg=";
-            };
-          })
-
-          epkgs.cl-lib
-        ];
-      });
+    package = pkgs.emacsGcc;
   };
 
   home.packages = with pkgs;

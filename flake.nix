@@ -9,9 +9,11 @@
     devshell.url = "github:numtide/devshell";
     flake-utils.url = "github:numtide/flake-utils/flatten-tree-system";
     nur.url = "github:nix-community/NUR";
+    straight.url = "github:vlaci/nix-straight.el";
+    straight.flake = false;
   };
 
-  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils }:
+  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, straight }:
     let
       inherit (builtins) attrValues;
       inherit (flake-utils.lib) eachDefaultSystem flattenTreeSystem;
@@ -65,6 +67,9 @@
                 overlays = [
                   (override unstable)
                   self.overlay
+                  (final: prev: {
+                    nix-straight = import straight;
+                  })
                   (final: prev: {
                     lib = (prev.lib or { }) // {
                       inherit (nixos.lib) nixosSystem;

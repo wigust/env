@@ -1,10 +1,10 @@
 { lib, config, pkgs, hardware, ... }:
 {
-
   imports = with hardware; [
     ../profiles/graphical
     ../profiles/graphical/games
     ../profiles/graphical/xmonad
+    ../profiles/network
     ../users/ben
     # Hardware
     common-cpu-amd
@@ -13,7 +13,14 @@
     common-pc-ssd
   ];
 
+  sound.mediaKeys.enable = true;
+
   boot = {
+    kernelPackages = pkgs.linuxPackages_5_9;
+    # Turn on magical sysrq key for magic
+    kernel.sysctl."kernel.sysrq" = 1;
+    tmpOnTmpfs = true;
+
     loader = {
       grub = {
         enable = true;

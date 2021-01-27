@@ -1,12 +1,3 @@
-#+TITLE: Busc's Emacs Config
-#+AUTHOR: Ben Buscarino
-#+DESCRIPTION: Oh boy here we go again
-#+STARTUP: showeverything
-#+PROPERTY: header-args:emacs-lisp :tangle yes
-
-* Bootstrap
-** Defaults
-#+BEGIN_SRC emacs-lisp
 (setq
  inhibit-startup-message t inhibit-startup-echo-area-message (user-login-name)
  initial-major-mode 'fundamental-mode initial-scratch-message nil
@@ -45,29 +36,20 @@
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 (global-hl-line-mode t)
-#+END_SRC
 
-** straight + use-package
-#+BEGIN_SRC emacs-lisp
 ;; Use straight from nixpkgs
 (require 'straight)
-;; (straight--make-build-cache-available)
+(straight--make-build-cache-available)
 
 (straight-use-package 'use-package)
-(setq straight-use-package-by-default t)
-#+END_SRC
+(setq straight-use-package-by-default +1)
 
+(straight-use-package 'use-package)
 
-* UI
-** Fonts
-#+BEGIN_SRC emacs-lisp
 (use-package all-the-icons)
 (add-to-list 'default-frame-alist
   '(font . "Fira Mono-12"))
-#+END_SRC
 
-** Theme
-#+BEGIN_SRC emacs-lisp
 (use-package doom-themes
   :after (all-the-icons treemacs)
   :config
@@ -83,16 +65,10 @@
 
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
-#+END_SRC
 
-** Modeline
-#+BEGIN_SRC emacs-lisp
 (use-package doom-modeline
   :init (doom-modeline-mode 1))
-#+END_SRC
 
-** Dashboard
-#+BEGIN_SRC emacs-lisp
 (use-package dashboard
   :after evil
   :init
@@ -127,21 +103,13 @@
     "r" 'dashboard-goto-recent-files
     )
   )
-#+END_SRC
 
-** Emoji
-#+BEGIN_SRC emacs-lisp
 (use-package emojify
   :hook (after-init . global-emojify-mode)
   :config
   (emojify-set-emoji-styles '(ascii github unicode))
 )
 
-#+END_SRC
-
-* Editor
-** Evil
-#+BEGIN_SRC emacs-lisp
 (use-package evil
   :init ;; tweak evil's configuration before loading it
   (setq
@@ -153,10 +121,7 @@
   :config ;; tweak evil after loading it
   (evil-mode)
   )
-#+END_SRC
 
-*** evil-leader
-#+BEGIN_SRC emacs-lisp
 (use-package evil-leader
   :after evil
   :config
@@ -172,19 +137,13 @@
     "w" evil-window-map
     )
   )
-#+END_SRC
 
-*** evil-goggles
-#+BEGIN_SRC emacs-lisp
 (use-package evil-goggles
   :after evil
   :config
   (evil-goggles-mode)
   (evil-goggles-use-diff-faces))
-#+END_SRC
 
-** which-key
-#+BEGIN_SRC emacs-lisp
 (use-package which-key
   :init
   (declare-function which-key-prefix-then-key-order "which-key")
@@ -201,10 +160,7 @@
   :config
   (which-key-mode +1)
   )
-#+END_SRC
 
-** Helm
-#+BEGIN_SRC emacs-lisp
 (use-package helm
   :config
   (helm-mode 1)
@@ -217,9 +173,7 @@
     "qq" 'kill-emacs
     )
   )
-#+END_SRC
-*** helm-projectile
-#+BEGIN_SRC emacs-lisp
+
 (use-package helm-projectile
   :after (helm projectile)
   :config
@@ -233,24 +187,14 @@
     "pg" 'helm-projectile-rg
     "pq" 'projectile-kill-buffers
     ))
-#+END_SRC
 
-** Misc. enhancements
-*** vi-tilde-fringe
-#+BEGIN_SRC emacs-lisp
 (use-package vi-tilde-fringe
   :config ((prog-mode-hook text-mode-hook conf-mode-hook) . vi-tilde-fringe-mode))
-#+END_SRC
 
-*** git-gutter-fringe
-#+BEGIN_SRC emacs-lisp
 (use-package git-gutter-fringe
   :config 
   (global-git-gutter-mode +1))
-#+END_SRC
 
-*** Highlight todos
-#+BEGIN_SRC emacs-lisp
 (use-package hl-todo
   :hook (prog-mode . hl-todo-mode)
   :config
@@ -276,10 +220,7 @@
           ("BUG" error bold)
           ;; For warning about a problematic or misguiding code
           ("XXX" font-lock-constant-face bold))))
-#+END_SRC
 
-*** Ligatures
-#+BEGIN_SRC emacs-lisp
 (use-package ligature
   :load-path "@ligature@"
   :config
@@ -305,10 +246,7 @@
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
-#+END_SRC
 
-*** Minimap
-#+BEGIN_SRC emacs-lisp
 (use-package minimap
   :config
   (setq minimap-window-location 'right
@@ -316,10 +254,7 @@
         minimap-width-fraction 0.09
         minimap-minimum-width 15)
   (pushnew! minimap-major-modes 'text-mode 'conf-mode))
-#+END_SRC
 
-*** Treemacs
-#+BEGIN_SRC emacs-lisp
 (use-package treemacs
   :init
   (setq treemacs-follow-after-init t
@@ -337,15 +272,9 @@
   :config (treemacs-set-scope-type 'Perspectives))
 (use-package treemacs-magit
   :after (treemacs magit))
-#+END_SRC
 
-** Windows
-#+BEGIN_SRC emacs-lisp
 (use-package ace-window)
-#+END_SRC
 
-** Tabs
-#+BEGIN_SRC emacs-lisp
 (use-package centaur-tabs
   :hook (after-init . centaur-tabs-mode)
   :init
@@ -363,84 +292,5 @@
   :config
   (add-hook '+doom-dashboard-mode-hook #'centaur-tabs-local-mode)
   (add-hook '+popup-buffer-mode-hook #'centaur-tabs-local-mode))
-#+END_SRC
 
-* Tools
-#+BEGIN_SRC emacs-lisp
 (use-package magit)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(doom! 
-       :ui
-       minimap
-       workspaces
-       (window-select +numbers)
-       tabs
-       (popups +defaults)
-
-
-       :editor
-       fold
-       format
-       parinfer
-       snippets
-
-       :emacs
-       (dired +ranger +icons)
-       (ibuffer +icons)
-       (undo +tree)
-       vc
-
-       :completion
-       (company +childframe)
-       helm
-
-       :checkers
-       spell
-       syntax
-
-       :app
-       calendar
-       ;;irc
-
-       :term
-       shell
-       term
-       vshell
-
-       :tools
-       debugger
-       direnv
-       (docker +lsp)
-       (eval +overlay)
-       (lookup +docsets)
-       (lsp +peek)
-       (magit +forge)
-       prodigy
-       terraform
-       upload
-       
-       :os
-       (:if IS-MAC macos)
-
-       :email
-       ;notmuch
-
-       :lang
-       (python +lsp +pyright +pyenv +poetry +cython)
-       json
-       data  ;; CSV, etc
-       nix
-       emacs-lisp
-       (org +brain +pandoc +present +pretty +roam)
-       web
-       (markdown +grip)
-       (javascript +lsp)
-       hy
-       yaml
-       (purescript +lsp)
-       (sh +lsp)
-
-       (haskell +lsp))
-#+END_SRC

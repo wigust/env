@@ -12,6 +12,10 @@
   ];
 
   boot = {
+    kernelPackages = pkgs.linuxPackages_5_9;
+    # Turn on magical sysrq key for magic
+    kernel.sysctl."kernel.sysrq" = 1;
+    tmpOnTmpfs = true;
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
