@@ -3,6 +3,7 @@
   imports = with hardware; [
     ../profiles/graphical
     ../profiles/graphical/xmonad
+    ../profiles/network
     ../users/ben
     # Hardware
     common-cpu-amd

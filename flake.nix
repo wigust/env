@@ -9,7 +9,7 @@
     devshell.url = "github:numtide/devshell";
     flake-utils.url = "github:numtide/flake-utils/flatten-tree-system";
     nur.url = "github:nix-community/NUR";
-    straight.url = "github:vlaci/nix-straight.el";
+    straight.url = "github:bbuscarino/nix-straight.el";
     straight.flake = false;
   };
 

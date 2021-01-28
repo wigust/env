@@ -44,8 +44,6 @@ in
   };
   users.defaultUserShell = pkgs.zsh;
   environment.shellInit = ''
-    export STARSHIP_CONFIG=${
-      pkgs.writeText "starship.toml" (fileContents ./starship.toml)
-    }
+    export STARSHIP_CONFIG=${./starship.toml}
   '';
 }

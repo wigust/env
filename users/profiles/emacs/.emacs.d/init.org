@@ -51,24 +51,20 @@
 #+BEGIN_SRC emacs-lisp
 ;; Use straight from nixpkgs
 (require 'straight)
-;; (straight--make-build-cache-available)
-
-(straight-use-package 'use-package)
-(setq straight-use-package-by-default t)
 #+END_SRC
 
 
 * UI
 ** Fonts
 #+BEGIN_SRC emacs-lisp
-(use-package all-the-icons)
+(straight-use-package 'all-the-icons)
 (add-to-list 'default-frame-alist
   '(font . "Fira Mono-12"))
 #+END_SRC
 
 ** Theme
-#+BEGIN_SRC emacs-lisp
-(use-package doom-themes
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package 'doom-themes
   :after (all-the-icons treemacs)
   :config
   (setq
@@ -86,14 +82,14 @@
 #+END_SRC
 
 ** Modeline
-#+BEGIN_SRC emacs-lisp
-(use-package doom-modeline
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'doom-modeline
   :init (doom-modeline-mode 1))
 #+END_SRC
 
 ** Dashboard
-#+BEGIN_SRC emacs-lisp
-(use-package dashboard
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'dashboard
   :after evil
   :init
   (setq
@@ -130,8 +126,8 @@
 #+END_SRC
 
 ** Emoji
-#+BEGIN_SRC emacs-lisp
-(use-package emojify
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'emojify
   :hook (after-init . global-emojify-mode)
   :config
   (emojify-set-emoji-styles '(ascii github unicode))
@@ -141,8 +137,8 @@
 
 * Editor
 ** Evil
-#+BEGIN_SRC emacs-lisp
-(use-package evil
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'evil
   :init ;; tweak evil's configuration before loading it
   (setq
    evil-search-module 'evil-search
@@ -156,8 +152,8 @@
 #+END_SRC
 
 *** evil-leader
-#+BEGIN_SRC emacs-lisp
-(use-package evil-leader
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'evil-leader
   :after evil
   :config
   (evil-leader/set-leader "<SPC>")
@@ -175,8 +171,8 @@
 #+END_SRC
 
 *** evil-goggles
-#+BEGIN_SRC emacs-lisp
-(use-package evil-goggles
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'evil-goggles
   :after evil
   :config
   (evil-goggles-mode)
@@ -184,8 +180,8 @@
 #+END_SRC
 
 ** which-key
-#+BEGIN_SRC emacs-lisp
-(use-package which-key
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'which-key
   :init
   (declare-function which-key-prefix-then-key-order "which-key")
   (declare-function which-key-mode "which-key")
@@ -204,8 +200,8 @@
 #+END_SRC
 
 ** Helm
-#+BEGIN_SRC emacs-lisp
-(use-package helm
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'helm
   :config
   (helm-mode 1)
   (require 'helm-config)
@@ -219,8 +215,8 @@
   )
 #+END_SRC
 *** helm-projectile
-#+BEGIN_SRC emacs-lisp
-(use-package helm-projectile
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'helm-projectile
   :after (helm projectile)
   :config
   (evil-leader/set-key
@@ -237,21 +233,21 @@
 
 ** Misc. enhancements
 *** vi-tilde-fringe
-#+BEGIN_SRC emacs-lisp
-(use-package vi-tilde-fringe
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'vi-tilde-fringe
   :config ((prog-mode-hook text-mode-hook conf-mode-hook) . vi-tilde-fringe-mode))
 #+END_SRC
 
 *** git-gutter-fringe
-#+BEGIN_SRC emacs-lisp
-(use-package git-gutter-fringe
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'git-gutter-fringe
   :config 
   (global-git-gutter-mode +1))
 #+END_SRC
 
 *** Highlight todos
-#+BEGIN_SRC emacs-lisp
-(use-package hl-todo
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'hl-todo
   :hook (prog-mode . hl-todo-mode)
   :config
   (setq hl-todo-highlight-punctuation ":"
@@ -279,8 +275,8 @@
 #+END_SRC
 
 *** Ligatures
-#+BEGIN_SRC emacs-lisp
-(use-package ligature
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'ligature
   :load-path "@ligature@"
   :config
   ;; Enable the "www" ligature in every possible major mode
@@ -308,8 +304,8 @@
 #+END_SRC
 
 *** Minimap
-#+BEGIN_SRC emacs-lisp
-(use-package minimap
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'minimap
   :config
   (setq minimap-window-location 'right
         minimap-update-delay 0
@@ -319,8 +315,8 @@
 #+END_SRC
 
 *** Treemacs
-#+BEGIN_SRC emacs-lisp
-(use-package treemacs
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'treemacs
   :init
   (setq treemacs-follow-after-init t
         treemacs-is-never-other-window t
@@ -330,23 +326,23 @@
   :config
   ;; Don't follow the cursor
   (treemacs-follow-mode -1))
-(use-package treemacs-projectile
+(straight-use-package 'treemacs-projectile
   :after treemacs)
-(use-package treemacs-persp
+(straight-use-package 'treemacs-persp
   :after treemacs
   :config (treemacs-set-scope-type 'Perspectives))
-(use-package treemacs-magit
+(straight-use-package 'treemacs-magit
   :after (treemacs magit))
 #+END_SRC
 
 ** Windows
-#+BEGIN_SRC emacs-lisp
-(use-package ace-window)
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'ace-window)
 #+END_SRC
 
 ** Tabs
-#+BEGIN_SRC emacs-lisp
-(use-package centaur-tabs
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'centaur-tabs
   :hook (after-init . centaur-tabs-mode)
   :init
   (setq centaur-tabs-set-icons t
@@ -366,8 +362,8 @@
 #+END_SRC
 
 * Tools
-#+BEGIN_SRC emacs-lisp
-(use-package magit)
+#+BEGIN_SRC emacs-lisp :tangle no
+(straight-use-package 'magit)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle no

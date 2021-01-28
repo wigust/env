@@ -8,7 +8,7 @@ let
     pkgs.stdenv.mkDerivation
       {
         name = filename;
-        buildInputs = [ pkgs.emacsGcc ];
+        buildInputs = [ emacs ];
         phases = [ "installPhase" ];
         installPhase = ''
           runHook preInstall
@@ -18,10 +18,11 @@ let
           runHook postInstall
         '';
       };
-  epkgs = pkgs.emacsPackagesFor pkgs.emacsGcc;
+  tangled = tangle ./.emacs.d/init.org;
+  emacs = (pkgs.emacsPackagesGen pkgs.emacsGcc).emacsWithPackages (epkgs: [ epkgs.use-package ]);
   straight = pkgs.nix-straight {
-    emacsPackages = epkgs;
-    emacsInitFile = tangle ./.emacs.d/init.org;
+    emacsPackages = pkgs.emacsPackagesFor emacs;
+    emacsInitFile = tangled;
     emacsArgs = [
       "--"
       "install"
@@ -70,7 +71,7 @@ in
 
   programs.emacs = {
     enable = true;
-    package = pkgs.emacsGcc;
+    package = emacs;
   };
 
   home.packages = with pkgs;
