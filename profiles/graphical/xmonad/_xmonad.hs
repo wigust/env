@@ -45,10 +45,6 @@ myWorkspaces = map show [1 .. 10]
 -- Simple settings
 myFocusFollowsMouse = True
 
--- Default terminal to use
-myTerminal :: String
-myTerminal = "alacritty"
-
 -- No mouse bindings
 myMouseBindings _ = M.empty
 

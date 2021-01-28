@@ -8,6 +8,7 @@
     nixpkgs-fmt
     nixops
     nixos-generators
-    nix-linter
+    # TODO: Broken on unstable
+    # nix-linter
   ];
 }

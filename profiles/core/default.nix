@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }: {
   imports = [ ../../local/locale.nix ];
-
+  environment.pathsToLink = [ "/share/zsh" ];
   environment = {
     systemPackages = with pkgs; [
       binutils

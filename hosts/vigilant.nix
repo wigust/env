@@ -13,7 +13,7 @@
   ];
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_5_9;
+    kernelPackages = pkgs.linuxPackages_5_10;
     # Turn on magical sysrq key for magic
     kernel.sysctl."kernel.sysrq" = 1;
     tmpOnTmpfs = true;

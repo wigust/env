@@ -22,6 +22,7 @@ in
         ../profiles/emacs
         ../profiles/xmonad
         ../profiles/zsh
+        ../profiles/im
       ] ++ homeModules;
 
       home.file = {

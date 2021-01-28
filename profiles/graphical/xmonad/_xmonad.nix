@@ -90,5 +90,9 @@ let
     } "substituteAll ${./_xmobar.hs} $out";
 in
 ''
+  -- Default terminal to use
+  myTerminal :: String
+  myTerminal = "${pkgs.hyper}/bin/hyper"
+
   spawnXmobar = spawnPipe "${pkgs.haskellPackages.xmobar}/bin/xmobar ${xmobarconf}"
 ''
