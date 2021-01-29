@@ -1,38 +1,22 @@
 { pkgs, config, lib, ... }:
-let
-  tangle = file:
-    let
-      inFilename = baseNameOf file;
-      filename = "${lib.removeSuffix ".org" inFilename}.el";
-    in
-    pkgs.stdenv.mkDerivation
-      {
-        name = filename;
-        buildInputs = [ pkgs.emacsGcc ];
-        phases = [ "installPhase" ];
-        installPhase = ''
-          runHook preInstall
-          cp ${file} ${inFilename}
-          emacs -q --batch -l ob-tangle --eval "(org-babel-tangle-file \"${inFilename}\")"
-          cp ${filename} $out
-          runHook postInstall
-        '';
-      };
-in
 {
-  home.file = {
-    ".emacs.d/init.el".source = tangle ./.emacs.d/init.org;
+  services.emacs = {
+    enable = true;
+    client.enable = true;
   };
 
-  programs.emacs = {
+  programs.doom-emacs = {
     enable = true;
-    package = pkgs.emacsGcc;
+    doomPrivateDir = ./.doom.d;
+    emacsPackage = pkgs.emacsGcc;
   };
 
   home.packages = with pkgs;
     [
       ripgrep
       fd
+
+      emacs-all-the-icons-fonts
 
       pandoc
 

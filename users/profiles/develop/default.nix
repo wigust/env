@@ -33,7 +33,6 @@
     #   in
     #   vscode-with-extensions.override { vscodeExtensions = extensions; }
     # )
-    vscode
   ];
 
   home.sessionVariables = {

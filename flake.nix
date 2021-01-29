@@ -9,11 +9,10 @@
     devshell.url = "github:numtide/devshell";
     flake-utils.url = "github:numtide/flake-utils/flatten-tree-system";
     nur.url = "github:nix-community/NUR";
-    straight.url = "github:bbuscarino/nix-straight.el";
-    straight.flake = false;
+    doom-emacs.url = "github:vlaci/nix-doom-emacs/fix-gccemacs";
   };
 
-  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, straight }:
+  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, doom-emacs }:
     let
       inherit (builtins) attrValues;
       inherit (flake-utils.lib) eachDefaultSystem flattenTreeSystem;
@@ -26,7 +25,7 @@
         nur.overlay
       ];
       externModules = [ home.nixosModules.home-manager ];
-      homeModules = [ ];
+      homeModules = [ doom-emacs.hmModule ];
 
       outputs =
         let
@@ -67,9 +66,6 @@
                 overlays = [
                   (override unstable)
                   self.overlay
-                  (final: prev: {
-                    nix-straight = import straight;
-                  })
                   (final: prev: {
                     lib = (prev.lib or { }) // {
                       inherit (nixos.lib) nixosSystem;

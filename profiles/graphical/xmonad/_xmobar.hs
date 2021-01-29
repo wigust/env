@@ -25,26 +25,26 @@ Config {
 
    -- plugins
    , commands = [
-       --cpu 
-       --Run Com "@cpu@" [] "cpu" 50,
+      --cpu 
+      Run Com "@cpu@" [] "cpu" 50,
 
-       --memory
-       Run Com "@memory@" [] "memory" 50,
+      --memory
+      --  Run Com "@memory@" [] "memory" 50,
 
-       --internet
-       Run Com "@internet@" [] "internet" 50,
+      --internet
+      --  Run Com "@internet@" [] "internet" 50,
 
-       --backlight
-       Run Com "@backlight@" [] "backlight" 50,
+      --backlight
+      --  Run Com "@backlight@" [] "backlight" 50,
 
-       --volume
-       --Run Com "@volume@" [] "volume" 50,
+      --volume
+      --  Run Com "@volume@" [] "volume" 50,
        
-       --battery
-       Run Com "@battery@" [] "battery" 50,
+      --battery
+      --  Run Com "@battery@" [] "battery" 50,
 
-       --clock
-       Run Com "@clock@" [] "clock" 600,
+      --clock
+      --  Run Com "@clock@" [] "clock" 600,
 
        --stdinreader
        Run StdinReader

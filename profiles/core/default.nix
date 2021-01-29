@@ -44,6 +44,7 @@
       powerline-fonts
       dejavu_fonts
       nerdfonts
+      hack-font
     ];
     fontconfig.defaultFonts = {
 

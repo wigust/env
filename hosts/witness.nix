@@ -30,7 +30,7 @@
     };
     initrd.availableKernelModules =
       [ "nvme" "xhci_pci" "ahci" "usbhid" "sd_mod" "exfat" ];
-    kernelModules = [ "kvm-amd" "nvidia" ];
+    kernelModules = [ "kvm-amd" "nvidia" "coretemp" "k10temp" ];
     supportedFilesystems = [ "ntfs" ];
   };
 
