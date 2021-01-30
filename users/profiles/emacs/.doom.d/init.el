@@ -18,7 +18,7 @@
        nav-flash
 
        :config
-       default
+       (default +bindings)
 
        :editor
        evil
@@ -41,10 +41,6 @@
        spell
        syntax
 
-       :app
-       calendar
-       ;;irc
-
        :term
        shell
        term
@@ -65,7 +61,6 @@
        (:if IS-MAC macos)
 
        :email
-       ;notmuch
 
        :lang
        (python +lsp +pyright +pyenv +poetry +cython)
