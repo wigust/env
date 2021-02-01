@@ -121,7 +121,7 @@ in
           "${oh-my-zsh}/share/oh-my-zsh/plugins/extract/extract.plugin.zsh"
           "${zsh-you-should-use}/share/zsh/plugins/you-should-use/you-should-use.plugin.zsh"
           "${zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-          "${zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+          "${zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
         ];
 
         source = map (source: "source ${source}") sources;
@@ -200,6 +200,9 @@ in
 
         # Auto rehash for new binaries
         zstyle ':completion:*' rehash true
+
+        # Enhanced form of menu completion called `menu selection'
+        zmodload -i zsh/complist
 
         # remove duplicates from pathsDejaVu Sans Mono
         # keep shell state frozen
