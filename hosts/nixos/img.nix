@@ -1,7 +1,7 @@
 { unstableModulesPath, ... }: {
   imports = [
     ../users/ben
-    ../profiles/network
+    ../../profiles/nixos/network
     "${unstableModulesPath}/installer/cd-dvd/iso-image.nix"
   ];
 

@@ -1,11 +1,11 @@
 { lib, config, pkgs, hardware, ... }:
 {
   imports = with hardware; [
-    ../profiles/graphical
-    ../profiles/graphical/games
-    ../profiles/graphical/xmonad
-    ../profiles/network
-    ../users/ben
+    ../../profiles/nixos/graphical
+    ../../profiles/nixos/graphical/games
+    ../../profiles/nixos/graphical/xmonad
+    ../../profiles/nixos/network
+    ../../users/ben
     # Hardware
     common-cpu-amd
     common-gpu-nvidia

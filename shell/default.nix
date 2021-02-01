@@ -12,7 +12,7 @@ let
 
   flk = pkgs.writeShellScriptBin "flk" ''
     if [[ -z "$1" ]]; then
-      echo "Usage: $(basename "$0") [ iso | up | install {host} | {host} [switch|boot|test] ]"
+      echo "Usage: $(basename "$0") [ iso | up | install {host} | {host} [switch|boot|test] | home {host} {user} [switch] ]"
     elif [[ "$1" == "up" ]]; then
       mkdir -p up
       hostname=$(hostname)
@@ -20,13 +20,18 @@ let
       echo \
       "{
       imports = [ ../up/$hostname/configuration.nix ];
-    }" > hosts/up-$hostname.nix
-    git add -f up/$hostname
-    git add -f hosts/up-$hostname.nix
+      }" > hosts/up-$hostname.nix
+      git add -f up/$hostname
+      git add -f hosts/up-$hostname.nisx
     elif [[ "$1" == "iso" ]]; then
       nix build $DEVSHELL_ROOT#nixosConfigurations.niximg.${build}.isoImage "${"\${@:2}"}"
     elif [[ "$1" == "install" ]]; then
       sudo nixos-install --flake ".#$2" "${"\${@:3}"}"
+        elif [[ "$1" == "home" ]]; then
+      nix build ./#hmActivationPackages.$2.$3
+      if [[ "$4" == "switch" ]]; then
+        ./result/activate && unlink result
+      fi
     else
       sudo nixos-rebuild --flake ".#$1" "${"\${@:2}"}"
     fi
@@ -34,7 +39,7 @@ let
 
   name = "flk";
 in
-pkgs.mkDevShell {
+pkgs.devshell.mkShell {
   inherit name;
 
   packages = with pkgs; with installPkgs; [
@@ -48,6 +53,27 @@ pkgs.mkDevShell {
 
   env = { inherit name; };
 
+  git.hooks = with pkgs; {
+    enable = true;
+    pre-commit.text = ''
+      if ${git}/bin/git rev-parse --verify HEAD >/dev/null 2>&1
+      then
+        against=HEAD
+      else
+        # Initial commit: diff against an empty tree object
+        against=$(${git}/bin/git hash-object -t tree /dev/null)
+      fi
+      # Redirect output to stderr.
+      exec 1>&2
+      # Format staged nix files.
+      exec ${nixpkgs-fmt}/bin/nixpkgs-fmt \
+        $(
+           ${git}/bin/git diff-index --name-only --cached $against -- \
+           | ${ripgrep}/bin/rg '\.nix$'
+         )
+    '';
+  };
+
   commands = with pkgs; [
     {
       name = nixpkgs-fmt.pname;
@@ -60,11 +86,6 @@ pkgs.mkDevShell {
       help = "Build, deploy, and install nixflk";
       category = "main";
       package = flk;
-    }
-    {
-      name = "hooks";
-      help = "install git hooks";
-      command = "pre-commit install";
     }
     {
       name = "grip";

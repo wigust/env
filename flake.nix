@@ -1,7 +1,8 @@
 {
   # nix flake update --update-input <input>
   inputs = {
-    master.url = "nixpkgs/master";
+    # master.url = "nixpkgs/master";
+    master.url = "github:r-ryantm/nixpkgs?rev=e24036c9a02f9ed138655e3a269b97eb8942fad5";
     nixos.url = "nixpkgs/nixos-unstable";
     home.url = "github:rycee/home-manager";
     emacs.url = "github:nix-community/emacs-overlay";
@@ -10,37 +11,52 @@
     flake-utils.url = "github:numtide/flake-utils/flatten-tree-system";
     nur.url = "github:nix-community/NUR";
     doom-emacs.url = "github:vlaci/nix-doom-emacs/fix-gccemacs";
+    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-20.09-darwin";
+    darwin.url = "github:lnl7/nix-darwin/master";
+    darwin.inputs.nixpkgs.follows = "nixpkgs-darwin";
   };
 
-  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, doom-emacs }:
+  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, doom-emacs, darwin, nixpkgs-darwin }:
     let
       inherit (builtins) attrValues;
       inherit (flake-utils.lib) eachDefaultSystem flattenTreeSystem;
       inherit (nixos.lib) recursiveUpdate;
-      inherit (self.lib) overlays nixosModules genPackages pkgImport genHomeActivationPackages;
+      inherit (self.lib) overlays modules genPackages pkgImport genHomeActivationPackages;
 
       externOverlays = [
         emacs.overlay
         devshell.overlay
         nur.overlay
       ];
-      externModules = [ home.nixosModules.home-manager ];
+
       homeModules = [ doom-emacs.hmModule ];
 
       outputs =
-        let
-          system = "x86_64-linux";
-          pkgs = self.legacyPackages.${system};
-        in
         {
-          inherit nixosModules overlays;
+          inherit overlays;
+
+          nixosModules = modules "nixos";
+          darwinModules = modules "darwin";
+
 
           nixosConfigurations =
-            import ./hosts
-              (recursiveUpdate inputs {
-                inherit pkgs externModules system homeModules;
+            import ./hosts/nixos
+              (recursiveUpdate inputs rec {
+                inherit homeModules;
                 inherit (pkgs) lib;
+                pkgs = self.legacyPackages."x86_64-linux";
+                externModules = [ home.nixosModules.home-manager ];
+                system = "x86_64-linux";
               });
+
+          darwinConfigurations =
+            import ./hosts/darwin (recursiveUpdate inputs rec {
+              inherit homeModules;
+              inherit (pkgs) lib;
+              pkgs = self.legacyPackages."x86_64-darwin";
+              externModules = [ home.darwinModules.home-manager ];
+              system = "x86_64-darwin";
+            });
 
           homeConfigurations =
             builtins.mapAttrs
@@ -79,15 +95,20 @@
               in
               pkgImport nixos overlays system;
 
-            packages = flattenTreeSystem system
-              (genPackages {
-                inherit self pkgs;
-              });
+            packages =
+              let
+                packages' = flattenTreeSystem system
+                  (genPackages {
+                    inherit self pkgs;
+                  });
+
+                homeActivationPackages = genHomeActivationPackages
+                  self.homeConfigurations;
+              in
+              recursiveUpdate packages' homeActivationPackages;
           in
           {
-            packages = packages //
-              genHomeActivationPackages
-                self.homeConfigurations;
+            inherit packages;
 
             devShell = import ./shell {
               inherit pkgs nixos;

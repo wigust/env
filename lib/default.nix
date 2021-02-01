@@ -55,18 +55,18 @@ in
           nameValuePair ("") (null))
       (readDir dir);
 
-  nixosModules =
+  modules = system:
     let
       # binary cache
       cachix = import ../cachix.nix;
       cachixAttrs = { inherit cachix; };
 
       # modules
-      moduleList = import ../modules/list.nix;
+      moduleList = import (../modules + "/${system}/list.nix");
       modulesAttrs = pathsToImportedAttrs moduleList;
 
       # profiles
-      profilesList = import ../profiles/list.nix;
+      profilesList = import (../profiles + "/${system}/list.nix");
       profilesAttrs = { profiles = pathsToImportedAttrs profilesList; };
     in
     recursiveUpdate

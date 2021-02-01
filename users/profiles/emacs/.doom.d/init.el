@@ -23,7 +23,7 @@
        :editor
        evil
        fold
-       format
+       (format +onsave)
        parinfer
        snippets
 
@@ -76,5 +76,4 @@
        yaml
        (purescript +lsp)
        (sh +lsp)
-
        (haskell +lsp))

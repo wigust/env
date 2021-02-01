@@ -13,7 +13,6 @@
 let
   inherit (lib.flk) recImport;
   inherit (builtins) attrValues removeAttrs;
-  inherit (lib) traceVal;
 
   unstableModules = [ ];
 
