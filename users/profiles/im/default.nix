@@ -1,9 +1,11 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: 
+let
+  inherit (pkgs) stdenv;
+in 
+with lib;
+{
   home.packages = with pkgs; [
-    discord-canary
     element-desktop
-    signal-desktop
-    slack
     mattermost
-  ];
+  ] ++ optionals stdenv.isLinux [discord-canary signal-desktop slack];
 }

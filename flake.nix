@@ -11,12 +11,12 @@
     flake-utils.url = "github:numtide/flake-utils/flatten-tree-system";
     nur.url = "github:nix-community/NUR";
     doom-emacs.url = "github:vlaci/nix-doom-emacs/fix-gccemacs";
-    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-20.09-darwin";
-    darwin.url = "github:lnl7/nix-darwin/master";
-    darwin.inputs.nixpkgs.follows = "nixpkgs-darwin";
+    nixpkgs-darwin.url = "nixpkgs/nixpkgs-20.09-darwin";
+    nix-darwin.url = "github:lnl7/nix-darwin/master";
+    nix-darwin.inputs.nixpkgs.follows = "master";
   };
 
-  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, doom-emacs, darwin, nixpkgs-darwin }:
+  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, doom-emacs, nix-darwin, nixpkgs-darwin }:
     let
       inherit (builtins) attrValues;
       inherit (flake-utils.lib) eachDefaultSystem flattenTreeSystem;
@@ -74,7 +74,10 @@
       (eachDefaultSystem
         (system:
           let
-            unstable = pkgImport master [ ] system;
+            unstable = pkgImport master [(final: prev: {
+                darwin = pkgImport nix-darwin [ ] system;
+              })]
+              system;
 
             pkgs =
               let
@@ -85,6 +88,7 @@
                   (final: prev: {
                     lib = (prev.lib or { }) // {
                       inherit (nixos.lib) nixosSystem;
+                      inherit (nix-darwin.lib) darwinSystem;
                       flk = self.lib;
                       utils = flake-utils.lib;
                     };

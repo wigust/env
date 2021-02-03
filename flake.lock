@@ -1,26 +1,5 @@
 {
   "nodes": {
-    "darwin": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs-darwin"
-        ]
-      },
-      "locked": {
-        "lastModified": 1611862547,
-        "narHash": "sha256-pBWrGexAJjuQjveuuDEsbeLZoQabbA7gaQs9h+OuZwo=",
-        "owner": "lnl7",
-        "repo": "nix-darwin",
-        "rev": "9e3e4033bcbb88dab3650889b73a242c58adc00e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "lnl7",
-        "ref": "master",
-        "repo": "nix-darwin",
-        "type": "github"
-      }
-    },
     "devshell": {
       "locked": {
         "lastModified": 1611864685,
@@ -296,6 +275,27 @@
         "type": "github"
       }
     },
+    "nix-darwin": {
+      "inputs": {
+        "nixpkgs": [
+          "master"
+        ]
+      },
+      "locked": {
+        "lastModified": 1611862547,
+        "narHash": "sha256-pBWrGexAJjuQjveuuDEsbeLZoQabbA7gaQs9h+OuZwo=",
+        "owner": "lnl7",
+        "repo": "nix-darwin",
+        "rev": "9e3e4033bcbb88dab3650889b73a242c58adc00e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lnl7",
+        "ref": "master",
+        "repo": "nix-darwin",
+        "type": "github"
+      }
+    },
     "nix-straight": {
       "flake": false,
       "locked": {
@@ -345,18 +345,17 @@
     },
     "nixpkgs-darwin": {
       "locked": {
-        "lastModified": 1612023221,
-        "narHash": "sha256-Y6IBuHk9AlQQOJ4K48+lPlRAQYNHIlNLSIJPocVl/pA=",
-        "owner": "nixos",
+        "lastModified": 1612184385,
+        "narHash": "sha256-a8jMTiNnBOT7rvFwOPTpCSDJj2mbaqRfWZY9lqX0CzY=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "5c358e47803f067391dc175ff1a0ec6131c55d39",
+        "rev": "75c9781712fcf6e4e8860954e1839f7dfcbeed39",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
+        "id": "nixpkgs",
         "ref": "nixpkgs-20.09-darwin",
-        "repo": "nixpkgs",
-        "type": "github"
+        "type": "indirect"
       }
     },
     "nixpkgs_2": {
@@ -485,7 +484,6 @@
     },
     "root": {
       "inputs": {
-        "darwin": "darwin",
         "devshell": "devshell",
         "doom-emacs": "doom-emacs",
         "emacs": "emacs",
@@ -493,6 +491,7 @@
         "hardware": "hardware",
         "home": "home",
         "master": "master",
+        "nix-darwin": "nix-darwin",
         "nixos": "nixos",
         "nixpkgs-darwin": "nixpkgs-darwin",
         "nur": "nur"

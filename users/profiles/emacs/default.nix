@@ -1,15 +1,16 @@
 { pkgs, config, lib, ... }:
 {
-  services.emacs = {
-    enable = true;
-    client.enable = true;
-  };
-
   programs.doom-emacs = {
     # TODO: Fix when nix-doom-emacs is fixed
     enable = false;
     doomPrivateDir = ./.doom.d;
     emacsPackage = pkgs.emacsGcc;
+  };
+
+  programs.emacs = {
+    enable = true;
+    package = pkgs.emacsGcc;
+    extraPackages = epkgs: [ epkgs.emacs-libvterm ];
   };
 
   home.sessionVariables.PATH = [ "$HOME/.emacs.d/bin:$PATH" ];
@@ -43,7 +44,7 @@
 
       # Languages
       nodePackages.pyright
-
+      nodePackages.dockerfile-language-server-nodejs
 
       sqlite
       git

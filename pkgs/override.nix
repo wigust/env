@@ -7,6 +7,7 @@ pkgs: final: prev:
   inherit (pkgs)
     discord-canary
     discord
+    slack
     emacsGcc;
 
   haskellPackages = prev.haskellPackages.override {

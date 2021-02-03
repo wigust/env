@@ -6,7 +6,15 @@ let
 
 in
 {
-
+  home.file.".pyenv" = {
+    source = pkgs.fetchFromGitHub {
+      owner = "pyenv";
+      repo = "pyenv";
+      rev = "4c302a022d653eb687c6b7b2d089d2a6cb55464a";
+      hash = "sha256-m5osWP6ztcWf9guUqEIyHIxY5dMMxbaVEbNfWWLR4pg=";
+    };
+    recursive = true;
+  };
   home.sessionVariables =
     let fd = "${pkgs.fd}/bin/fd -H";
     in
@@ -22,6 +30,9 @@ in
         "${alt_c_cmd}/bin/cdr-skim.zsh";
       SKIM_DEFAULT_COMMAND = fd;
       SKIM_CTRL_T_COMMAND = fd;
+      # pyenv
+      PYENV_ROOT="$HOME/.pyenv";
+      PATH="$HOME/.pyenv/bin:$PATH";
     };
 
   home.packages = with pkgs; [
@@ -38,6 +49,8 @@ in
     unzip
     xz
     zsh-completions
+    gnused
+    less
   ];
 
   programs.zsh = {
@@ -102,7 +115,7 @@ in
       df = "df -h";
       du = "du -h";
 
-      ls = "exa";
+      #ls = "exa";
       l = "ls -lhg --git";
       la = "l -a";
       t = "l -T";
@@ -211,7 +224,7 @@ in
         eval "$(${pkgs.starship}/bin/starship init zsh)"
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
         eval $(${pkgs.gitAndTools.hub}/bin/hub alias -s)
-        source ${pkgs.skim}/share/skim/key-bindings.zsh
+        eval "$(pyenv init -)"
       '';
   };
 }

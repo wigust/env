@@ -17,7 +17,7 @@ let
 
   config = hostName:
     lib.darwinSystem rec {
-      inherit system;
+      #inherit system;
 
       specialArgs =
         {
@@ -26,7 +26,7 @@ let
 
       modules =
         let
-          core = self.nixosModules.profiles.core;
+          core = self.darwinModules.profiles.core;
 
           modOverrides = { config, unstableModulesPath, ... }: {
             disabledModules = unstableModules;
@@ -34,7 +34,7 @@ let
               (path: "${unstableModulesPath}/${path}")
               unstableModules;
           };
-          hm-nixos-as-super = { config, ... }: {
+          hm-as-super = { config, ... }: {
             # Submodules have merge semantics, making it possible to amend
             # the `home-manager.users` submodule for additional functionality.
             options.home-manager.users = lib.mkOption {
@@ -53,42 +53,30 @@ let
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
 
-            hardware.enableRedistributableFirmware = lib.mkDefault true;
-
-            networking.hostName = hostName;
+            networking.hostName = lib.mkDefault hostName;
             nix.nixPath = let path = toString ../.; in
               [
                 "nixos-unstable=${master}"
-                "nixpkgs=${nixos}"
+                "nixpkgs=${nix-darwin}"
                 "nixpkgs-overlays=${path}/overlays"
                 "home-manager=${home}"
               ];
 
-            nixpkgs = { inherit pkgs; };
-
-            nix.registry = {
-              master.flake = master;
-              nixflk.flake = self;
-              nixpkgs.flake = nixos;
-              home-manager.flake = home;
-            };
-
-            system.configurationRevision = lib.mkIf (self ? rev) self.rev;
-            system.stateVersion = "20.09";
+            nixpkgs.config = pkgs.config;
           };
 
           local = import "${toString ./.}/${hostName}.nix";
 
           # Everything in `./modules/list.nix`.
           flakeModules =
-            attrValues (removeAttrs self.nixosModules [ "profiles" ]);
+            attrValues (removeAttrs self.darwinModules [ "profiles" ]);
 
         in
         flakeModules ++ [
           core
           global
           local
-          hm-nixos-as-super
+          hm-as-super
           modOverrides
         ] ++ externModules;
 

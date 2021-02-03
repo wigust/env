@@ -42,9 +42,8 @@
  syntax
 
  :term
- shell
- term
- vshell
+ eshell
+ vterm
 
  :tools
  debugger
