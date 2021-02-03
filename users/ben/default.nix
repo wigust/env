@@ -18,6 +18,7 @@ in
         ../profiles/develop/git
         ../profiles/develop/nix
         ../profiles/develop/python
+        ../profiles/develop/haskell
         ../profiles/graphical
         ../profiles/emacs
         ../profiles/xmonad
