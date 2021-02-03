@@ -1,9 +1,10 @@
-{stdenv, runCommand, fetchgit, linux-pam, xorg, path }:
+{ stdenv, runCommand, fetchgit, linux-pam, xorg, path }:
 
 stdenv.mkDerivation {
   name = "ly";
   version = "77f6958241646e3f315f27bc38212c3c4e1e7a8d";
-    src = let
+  src =
+    let
       # locally modify `nix-prefetch-git` to recursively use upstream’s .github as .gitmodules…
       fetchgitMod = args:
         (fetchgit args).overrideAttrs (oldAttrs: {
@@ -13,19 +14,20 @@ stdenv.mkDerivation {
             chmod 755 $out
           '';
         });
-    in fetchgitMod {
+    in
+    fetchgitMod {
       url = "https://github.com/nullgemm/ly.git";
       rev = "77f6958241646e3f315f27bc38212c3c4e1e7a8d";
       sha256 = "05fqpinln1kbxb7cby1ska3nfw9xf60ig2h2nj0xv167fsrqlhly";
       fetchSubmodules = true;
       deepClone = true;
     };
-    makeFlags = [ ];
-    buildInputs = [ linux-pam xorg.libxcb xorg.xauth  ];
+  makeFlags = [ ];
+  buildInputs = [ linux-pam xorg.libxcb xorg.xauth ];
 
-    preConfigure = ''
-      sed '/^FLAGS=/a FLAGS+= -Wno-error=unused-result' -i sub/termbox_next/makefile
-    '';
+  preConfigure = ''
+    sed '/^FLAGS=/a FLAGS+= -Wno-error=unused-result' -i sub/termbox_next/makefile
+  '';
 
-    meta.platforms = stdenv.lib.platforms.linux;
+  meta.platforms = stdenv.lib.platforms.linux;
 }

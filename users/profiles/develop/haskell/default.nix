@@ -1,3 +1,3 @@
-{pkgs, ...}: {
-  home.packages = with pkgs; [ormolu];
+{ pkgs, ... }: {
+  home.packages = with pkgs; [ ormolu ];
 }
