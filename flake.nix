@@ -1,8 +1,7 @@
 {
   # nix flake update --update-input <input>
   inputs = {
-    # master.url = "nixpkgs/master";
-    master.url = "github:r-ryantm/nixpkgs?rev=e24036c9a02f9ed138655e3a269b97eb8942fad5";
+    master.url = "nixpkgs/master";
     nixos.url = "nixpkgs/nixos-unstable";
     home.url = "github:rycee/home-manager";
     emacs.url = "github:nix-community/emacs-overlay";
@@ -10,7 +9,7 @@
     devshell.url = "github:numtide/devshell";
     flake-utils.url = "github:numtide/flake-utils/flatten-tree-system";
     nur.url = "github:nix-community/NUR";
-    doom-emacs.url = "github:vlaci/nix-doom-emacs/fix-gccemacs";
+    doom-emacs.url = "github:vlaci/nix-doom-emacs";
     nixpkgs-darwin.url = "nixpkgs/nixpkgs-20.09-darwin";
     nix-darwin.url = "github:lnl7/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "master";
@@ -37,7 +36,6 @@
 
           nixosModules = modules "nixos";
           darwinModules = modules "darwin";
-
 
           nixosConfigurations =
             import ./hosts/nixos
@@ -74,9 +72,11 @@
       (eachDefaultSystem
         (system:
           let
-            unstable = pkgImport master [(final: prev: {
+            unstable = pkgImport master [
+              (final: prev: {
                 darwin = pkgImport nix-darwin [ ] system;
-              })]
+              })
+            ]
               system;
 
             pkgs =

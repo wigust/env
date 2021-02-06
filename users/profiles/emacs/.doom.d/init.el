@@ -16,6 +16,7 @@
  (popups +defaults)
  treemacs
  nav-flash
+ unicode
 
  :config
  (default +bindings +smartparens)
@@ -42,7 +43,6 @@
  syntax
 
  :term
- eshell
  vterm
 
  :tools

@@ -2,15 +2,16 @@
 {
   programs.doom-emacs = {
     # TODO: Fix when nix-doom-emacs is fixed
-    enable = false;
-    doomPrivateDir = ./.doom.d;
-    emacsPackage = pkgs.emacsGcc;
+    #enable = true;
+    #doomPrivateDir = ./.doom.d;
+    #emacsPackage = pkgs.emacsGit;
+    #extraPackages = epkgs: [ epkgs.vterm ];
   };
 
   programs.emacs = {
     enable = true;
     package = pkgs.emacsGcc;
-    extraPackages = epkgs: [ epkgs.emacs-libvterm ];
+    extraPackages = epkgs: [ epkgs.vterm ];
   };
 
   home.sessionVariables.PATH = [ "$HOME/.emacs.d/bin:$PATH" ];
@@ -46,7 +47,22 @@
       nodePackages.pyright
       nodePackages.dockerfile-language-server-nodejs
 
+      # purescript
+      nodePackages.purescript-language-server
+      purs
+      spago
+      pulp
+      purty
+      purp
+
+      haskellPackages.haskell-language-server
+      rnix-lsp
+      llvm # Includes clangd
+      nodePackages.bash-language-server
+
       sqlite
       git
+
+      libvterms
     ];
 }
