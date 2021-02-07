@@ -93,6 +93,7 @@
                       utils = flake-utils.lib;
                     };
                   })
+                  #(final: prev: { emacs = final.emacsGcc; })
                 ]
                 ++ (attrValues self.overlays)
                 ++ externOverlays;

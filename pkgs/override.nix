@@ -8,7 +8,10 @@ pkgs: final: prev:
     discord-canary
     discord
     slack
-    emacsGcc;
+    emacs
+    emacsGcc
+    spotify
+    jetbrains;
 
   haskellPackages = prev.haskellPackages.override {
     overrides = hfinal: hprev:

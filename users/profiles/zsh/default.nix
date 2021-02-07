@@ -31,8 +31,8 @@ in
       SKIM_DEFAULT_COMMAND = fd;
       SKIM_CTRL_T_COMMAND = fd;
       # pyenv
-      PYENV_ROOT="$HOME/.pyenv";
-      PATH="$HOME/.pyenv/bin:$PATH";
+      PYENV_ROOT = "$HOME/.pyenv";
+      PATH = "$HOME/.pyenv/bin:$PATH";
     };
 
   home.packages = with pkgs; [

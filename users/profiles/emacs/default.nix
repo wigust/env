@@ -1,36 +1,30 @@
 { pkgs, config, lib, ... }:
 {
-  programs.doom-emacs = {
-    # TODO: Fix when nix-doom-emacs is fixed
-    #enable = true;
-    #doomPrivateDir = ./.doom.d;
-    #emacsPackage = pkgs.emacsGit;
-    #extraPackages = epkgs: [ epkgs.vterm ];
-  };
-
   programs.emacs = {
     enable = true;
     package = pkgs.emacsGcc;
     extraPackages = epkgs: [ epkgs.vterm ];
   };
-
-  home.sessionVariables.PATH = [ "$HOME/.emacs.d/bin:$PATH" ];
+  home.sessionPath = [ "$HOME/.emacs.d/bin" ];
+  home.sessionVariables = {
+    EMACS = "${config.programs.emacs.finalPackage}/bin/emacs";
+  };
 
   home.file = {
     ".doom.d/" = {
       source = ./.doom.d;
       recursive = true;
-      onChange = ''
-        #!${pkgs.stdenv.shell}
-        DOOM="$HOME/.emacs.d"
+      # onChange = ''
+      #   #!${pkgs.stdenv.shell}
+      #   DOOM="$HOME/.emacs.d"
 
-        if [ ! -d "$DOOM" ]; then
-          git clone https://github.com/hlissner/doom-emacs.git $DOOM
-          $DOOM/bin/doom -y install
-        fi
+      #   if [ ! -d "$DOOM" ]; then
+      #     git clone https://github.com/hlissner/doom-emacs.git $DOOM
+      #     $DOOM/bin/doom -y install
+      #   fi
 
-        $DOOM/bin/doom sync
-      '';
+      #   $DOOM/bin/doom sync
+      # '';
     };
   };
 
@@ -44,18 +38,8 @@
       (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
 
       # Languages
-      nodePackages.pyright
       nodePackages.dockerfile-language-server-nodejs
 
-      # purescript
-      nodePackages.purescript-language-server
-      purs
-      spago
-      pulp
-      purty
-      purp
-
-      haskellPackages.haskell-language-server
       rnix-lsp
       llvm # Includes clangd
       nodePackages.bash-language-server
@@ -63,6 +47,6 @@
       sqlite
       git
 
-      libvterms
+      libvterm
     ];
 }

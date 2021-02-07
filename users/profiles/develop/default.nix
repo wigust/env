@@ -4,7 +4,6 @@
     less
     wget
     curl
-    clang
     git-crypt
     gnupg
     less
@@ -12,27 +11,33 @@
     pass
     tokei
     wget
-    ormolu
-    # IDEs and editors
-    # (
-    #   let
-    #     extensions = (with vscode-extensions; [
-    #       bbenoist.Nix
-    #       ms-vsliveshare.vsliveshare
-    #       ms-python.python
-    #       ms-azuretools.vscode-docker
-    #       ms-vscode-remote.remote-ssh
-    #     ]) ++ vscode-utils.extensionsFromVscodeMarketplace [
-    #       {
-    #         name = "remote-ssh-edit";
-    #         publisher = "ms-vscode-remote";
-    #         version = "0.47.2";
-    #         sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
-    #       }
-    #     ];
-    #   in
-    #   vscode-with-extensions.override { vscodeExtensions = extensions; }
-    # )
+    (
+      let
+        extensions = (with vscode-extensions; [
+          bbenoist.Nix
+          ms-vsliveshare.vsliveshare
+          ms-python.python
+          ms-azuretools.vscode-docker
+          ms-vscode-remote.remote-ssh
+          haskell.haskell
+          tamasfe.even-better-toml
+        ]) ++ vscode-utils.extensionsFromVscodeMarketplace [
+          {
+            name = "remote-ssh-edit";
+            publisher = "ms-vscode-remote";
+            version = "0.47.2";
+            sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
+          }
+          {
+            name = "nixpkgs-fmt";
+            publisher = "B4dM4n";
+            version = "0.0.1";
+            sha256 = "sha256-vz2kU36B1xkLci2QwLpl/SBEhfSWltIDJ1r7SorHcr8=";
+          }
+        ];
+      in
+      vscode-with-extensions.override { vscodeExtensions = extensions; }
+    )
   ];
 
   home.sessionVariables = {

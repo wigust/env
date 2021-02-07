@@ -49,7 +49,7 @@
   };
 
   nix = {
-    
+
     gc.automatic = true;
     gc.user = "bbuscarino";
     useSandbox = true;

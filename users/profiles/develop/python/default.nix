@@ -1,46 +1,32 @@
 { pkgs, ... }:
-let inherit (pkgs) python3Packages;
-in
 {
   home.packages =
-    let
-      packages = pythonPackages:
-        with pythonPackages; [
+    with pkgs.python38Packages; [
+      (pkgs.python38Full.withPackages (p:
+        with p; [
           setuptools
           pip
           virtualenv
           tkinter
           ptpython
-        ];
+        ]))
+      poetry
+      black
+      pkgs.nodePackages.pyright
 
-      python = pkgs.python38Full.withPackages packages;
-    in
-    with pkgs.python38Packages; [ python poetry black pkgs.nodePackages.pyright ];
+      pkgs.jetbrains.pycharm-professional
+    ];
+
+  home.sessionPath = [ "$PYENV_ROOT/bin" ];
+
   home.sessionVariables = {
-    PYTHONSTARTUP =
-      let
-        startup = pkgs.writers.writePython3 "ptpython.py"
-          {
-            libraries = with python3Packages; [ ptpython ];
-          } ''
-          from __future__ import unicode_literals
-
-          from pygments.token import Token
-
-          from ptpython.layout import CompletionVisualisation
-
-          import sys
-
-          ${builtins.readFile ./ptconfig.py}
-
-          try:
-              from ptpython.repl import embed
-          except ImportError:
-              print("ptpython is not available: falling back to standard prompt")
-          else:
-              sys.exit(embed(globals(), locals(), configure=configure))
-        '';
-      in
-      "${startup}";
+    PYENV_ROOT = "$HOME/.pyenv";
+    PYTHONSTARTUP = ''
+            ${pkgs.writers.writePython3 "ptpython.py"
+      ({
+      libraries = [ pkgs.python3Packages.ptpython ];
+        })
+      (builtins.readFile ./ptconfig.py) }
+    '';
   };
 }

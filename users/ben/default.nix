@@ -7,23 +7,22 @@ in
     # ./restic
     ./syncthing
   ];
-  home-manager.useGlobalPkgs = true;
-  home-manager.useUserPackages = true;
   home-manager.users.ben = { home, config, homeModules, ... }:
     with home; {
       imports = [
         ../profiles/alacritty
         ../profiles/develop
-        ../profiles/develop/direnv
-        ../profiles/develop/git
-        ../profiles/develop/nix
-        ../profiles/develop/python
         ../profiles/develop/haskell
-        ../profiles/graphical
+        ../profiles/develop/nix
+        ../profiles/develop/purescript
+        ../profiles/develop/python
+        ../profiles/direnv
         ../profiles/emacs
+        ../profiles/git
+        ../profiles/graphical
+        ../profiles/im
         ../profiles/xmonad
         ../profiles/zsh
-        ../profiles/im
       ] ++ homeModules;
 
       home.file = {
@@ -34,6 +33,7 @@ in
 
   users.users.ben = {
     uid = 1000;
+    # mkpasswd -m sha-512 hunter1 >> ./ben.hashedPassword
     hashedPassword = lib.fileContents ./ben.hashedPassword;
     isNormalUser = true;
     home = "/home/ben";
