@@ -9,13 +9,12 @@
     devshell.url = "github:numtide/devshell";
     flake-utils.url = "github:numtide/flake-utils/flatten-tree-system";
     nur.url = "github:nix-community/NUR";
-    doom-emacs.url = "github:vlaci/nix-doom-emacs";
     nixpkgs-darwin.url = "nixpkgs/nixpkgs-20.09-darwin";
     nix-darwin.url = "github:lnl7/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "master";
   };
 
-  outputs = inputs@{ self, home, nixos, master, emacs, hardware, devshell, nur, flake-utils, doom-emacs, nix-darwin, nixpkgs-darwin }:
+  outputs = inputs@{ self, home, nixos, master, hardware, devshell, nur, emacs, flake-utils, nix-darwin, nixpkgs-darwin }:
     let
       inherit (builtins) attrValues;
       inherit (flake-utils.lib) eachDefaultSystem flattenTreeSystem;
@@ -28,7 +27,7 @@
         nur.overlay
       ];
 
-      homeModules = [ doom-emacs.hmModule ];
+      homeModules = [ ];
 
       outputs =
         {
@@ -93,7 +92,6 @@
                       utils = flake-utils.lib;
                     };
                   })
-                  #(final: prev: { emacs = final.emacsGcc; })
                 ]
                 ++ (attrValues self.overlays)
                 ++ externOverlays;

@@ -18,13 +18,13 @@ let
     (vscode-with-extensions.override {
       vscodeExtensions = with vscode-extensions; (
         [
-          bbenoist.Nix
-          ms-vsliveshare.vsliveshare
-          ms-python.python
-          ms-azuretools.vscode-docker
+          (mkIf isLinux ms-python.python)
           (mkIf isLinux ms-vscode-remote.remote-ssh)
+          (mkIf isLinux ms-vsliveshare.vsliveshare)
           haskell.haskell
+          ms-azuretools.vscode-docker
           tamasfe.even-better-toml
+          bbenoist.Nix
         ] ++ vscode-utils.extensionsFromVscodeMarketplace [
           {
             name = "nixpkgs-fmt";

@@ -7,6 +7,7 @@
 , system
 , externModules
 , homeModules
+, emacs
 , ...
 }:
 let
@@ -17,10 +18,9 @@ let
 
   config = hostName:
     lib.darwinSystem rec {
-      #inherit system;
-
       specialArgs =
         {
+          inherit emacs;
           unstableModulesPath = "${master}/modules";
         };
 

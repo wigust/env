@@ -6,7 +6,7 @@ in
 {
   programs.emacs = {
     enable = true;
-    package = pkgs.emacsGcc;
+    package = pkgs.emacsGcc.override { withXwidgets = true; };
     extraPackages = epkgs: [ epkgs.vterm ];
   };
   home.sessionPath = [ "$HOME/.emacs.d/bin" ];
