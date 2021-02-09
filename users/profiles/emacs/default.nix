@@ -1,4 +1,8 @@
 { pkgs, config, lib, ... }:
+let
+  inherit (pkgs.stdenv) isLinux isDarwin;
+  inherit (lib) mkIf optionals;
+in
 {
   programs.emacs = {
     enable = true;
@@ -28,6 +32,19 @@
     };
   };
 
+  # Install MacOS applications to the user environment if the targetPlatform is Darwin
+  home.file."Applications/home-manager" =
+    let
+      apps = pkgs.buildEnv {
+        name = "home-manager-applications";
+        paths = config.home.packages;
+        pathsToLink = "/Applications";
+      };
+    in
+    mkIf isDarwin {
+      source = "${apps}/Applications";
+    };
+
   home.packages = with pkgs;
     [
       # Doom dependencies
@@ -46,7 +63,5 @@
 
       sqlite
       git
-
-      libvterm
-    ];
+    ] ++ optionals isLinux (with pkgs; [ libvterm ]);
 }

@@ -7,15 +7,19 @@
       imports = [
         ../profiles/alacritty
         ../profiles/develop
-        ../profiles/develop/direnv
-        ../profiles/develop/git
+        ../profiles/develop/haskell
         ../profiles/develop/nix
         ../profiles/develop/python
+        ../profiles/direnv
         ../profiles/emacs
-        ../profiles/zsh
+        ../profiles/git
         ../profiles/im
+        ../profiles/zsh
       ] ++ homeModules;
 
-      home.file.".gitconfig".source = ../../secrets/dotfiles/work.gitconfig;
+      home.file = {
+        ".gitconfig".source = ../../secrets/dotfiles/work.gitconfig;
+        ".background-image".source = ../../assets/wallpaper.png;
+      };
     };
 }

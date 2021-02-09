@@ -1,46 +1,27 @@
 { lib, pkgs, config, ... }:
 let
-  inherit (builtins) concatStringsSep;
-
-  inherit (lib) fileContents;
-
+  inherit (pkgs.stdenv) isDarwin isLinux shell;
+  inherit (lib) fileContents optionals optionalString optionalAttrs;
+  bin = name:
+    let package = pkgs."${name}"; in "${package}/bin/${name}";
 in
 {
-  home.file.".pyenv" = {
-    source = pkgs.fetchFromGitHub {
-      owner = "pyenv";
-      repo = "pyenv";
-      rev = "4c302a022d653eb687c6b7b2d089d2a6cb55464a";
-      hash = "sha256-m5osWP6ztcWf9guUqEIyHIxY5dMMxbaVEbNfWWLR4pg=";
-    };
-    recursive = true;
-  };
   home.sessionVariables =
-    let fd = "${pkgs.fd}/bin/fd -H";
-    in
     {
       BAT_PAGER = "less";
-      SKIM_ALT_C_COMMAND =
-        let
-          alt_c_cmd = pkgs.writeScriptBin "cdr-skim.zsh" ''
-            #!${pkgs.zsh}/bin/zsh
-            ${fileContents ./cdr-skim.zsh}
-          '';
-        in
-        "${alt_c_cmd}/bin/cdr-skim.zsh";
-      SKIM_DEFAULT_COMMAND = fd;
-      SKIM_CTRL_T_COMMAND = fd;
-      # pyenv
-      PYENV_ROOT = "$HOME/.pyenv";
-      PATH = "$HOME/.pyenv/bin:$PATH";
     };
+
+  home.file.".p10k.zsh".source = ./.p10k.zsh;
 
   home.packages = with pkgs; [
     bat
     bzip2
     exa
+    fzf
     gitAndTools.hub
+    gnused
     gzip
+    less
     lrzip
     p7zip
     procs
@@ -49,22 +30,19 @@ in
     unzip
     xz
     zsh-completions
-    gnused
-    less
   ];
 
   programs.zsh = {
     enable = true;
 
-    # enableGlobalCompInit = false;
-
+    autocd = true;
     history.size = 10000;
+    enableAutosuggestions = true;
 
-    # dirHashes = {
-    #   nixos = "/etc/nixos";
-    #   dl = "$HOME/Downloads";
-    #   dev = "$HOME/Development";
-    # };
+    dirHashes = {
+      dl = "$HOME/Downloads";
+      dev = "$HOME/Development";
+    };
 
     shellAliases = {
       # quick cd
@@ -77,7 +55,7 @@ in
       g = "git";
 
       # grep
-      grep = "rg";
+      grep = "${pkgs.ripgrep}/bin/rg";
       gi = "grep -i";
 
       # internet ip
@@ -92,15 +70,40 @@ in
       nf = "n flake";
       srch = "ns nixpkgs";
       nrb = "sudo nixos-rebuild switch --flake $HOME/env";
+      nis =
+        let
+          nix-issues-search = pkgs.writeShellScriptBin "nix-issues-search" "${pkgs.xdg_utils}/bin/xdg-open https://github.com/NixOS/nixpkgs/issues?q=$(${pkgs.coreutils}/bin/printf \" %s\" \"$@\" | ${pkgs.jq}/bin/jq -sRr @uri)";
+        in
+        "${nix-issues-search}/bin/nix-issues-search";
 
+      nps =
+        let
+          nix-package-search = pkgs.writeShellScriptBin "nix-package-search" "${pkgs.xdg_utils}/bin/xdg-open https://search.nixos.org/packages?query=$(${pkgs.coreutils}/bin/printf \" %s\" \"$@\" | ${pkgs.jq}/bin/jq -sRr @uri)";
+        in
+        "${nix-package-search}/bin/nix-package-search";
       # sudo
       s = "sudo -E ";
       si = "sudo -i";
       se = "sudoedit";
 
       # top
-      top = "gotop";
+      top = bin "gotop";
 
+      cat = bin "bat";
+
+      df = "df -h";
+      du = "du -h";
+
+      l = "ls -lhg --git";
+      la = "l -a";
+      t = "l -T";
+      ta = "la -T";
+
+      ps = bin "procs";
+
+      rz = "exec zsh";
+    } // optionalAttrs isLinux {
+      ls = bin "exa";
       # systemd
       ctl = "systemctl";
       stl = "s systemctl";
@@ -110,121 +113,50 @@ in
       up = "s systemctl start";
       dn = "s systemctl stop";
       jtl = "journalctl";
-      cat = "${pkgs.bat}/bin/bat";
+    } // optionalAttrs isDarwin { };
 
-      df = "df -h";
-      du = "du -h";
-
-      #ls = "exa";
-      l = "ls -lhg --git";
-      la = "l -a";
-      t = "l -T";
-      ta = "la -T";
-
-      ps = "${pkgs.procs}/bin/procs";
-
-      rz = "exec zsh";
+    shellGlobalAliases = {
+      UUID = "$(uuidgen | tr -d \\n)";
+      G = "| grep";
     };
+
+    oh-my-zsh = {
+      enable = true;
+      plugins = [
+        "battery"
+        "direnv"
+        "docker"
+        "docker-compose"
+        "emacs"
+        "encode64"
+        "extract"
+        "git"
+        "github"
+        "gpg-agent"
+        "history"
+        "history-substring-search"
+        "jira"
+        "pyenv"
+        "python"
+        "ssh-agent"
+        "stack"
+        "sudo"
+        "systemd"
+        "transfer"
+        "virtualenv"
+        "web-search"
+        "zsh-interactive-cd"
+      ] ++ optionals isDarwin [ "osx" "keychain" ];
+      extraConfig = ''
+        source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+      '';
+    };
+
     initExtra =
-      let
-        sources = with pkgs; [
-          ./cdr.zsh
-          "${skim}/share/skim/completion.zsh"
-          "${oh-my-zsh}/share/oh-my-zsh/plugins/sudo/sudo.plugin.zsh"
-          "${oh-my-zsh}/share/oh-my-zsh/plugins/extract/extract.plugin.zsh"
-          "${zsh-you-should-use}/share/zsh/plugins/you-should-use/you-should-use.plugin.zsh"
-          "${zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-          "${zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-        ];
-
-        source = map (source: "source ${source}") sources;
-        setOptions = [
-          "extendedglob"
-          "incappendhistory"
-          "sharehistory"
-          "histignoredups"
-          "histfcntllock"
-          "histreduceblanks"
-          "histignorespace"
-          "histallowclobber"
-          "autocd"
-          "cdablevars"
-          "nomultios"
-          "pushdignoredups"
-          "autocontinue"
-          "promptsubst"
-        ];
-        functions = pkgs.stdenv.mkDerivation {
-          name = "zsh-functions";
-          src = ./functions;
-
-          ripgrep = "${pkgs.ripgrep}";
-          man = "${pkgs.man}";
-          exa = "${pkgs.exa}";
-
-          installPhase =
-            let basename = "\${file##*/}";
-            in
-            ''
-              mkdir $out
-
-              for file in $src/*; do
-                substituteAll $file $out/${basename}
-                chmod 755 $out/${basename}
-              done
-            '';
-        };
-
-        plugins = concatStringsSep "\n" ([
-          "${pkgs.any-nix-shell}/bin/any-nix-shell zsh --info-right | source /dev/stdin"
-        ] ++ source);
-
-      in
       ''
-        ${plugins}
-        setopt ${concatStringsSep " " setOptions}
-
-        fpath+=( ${functions} )
-        autoload -Uz ${functions}/*(:t)
-
-        # useful functions
-        autoload -Uz zmv zcalc zargs url-quote-magic bracketed-paste-magic
-        zle -N self-insert url-quote-magic
-        zle -N bracketed-paste bracketed-paste-magic
-
-
-        if [[ -f ~/.zcompdump ]]; then
-          typeset -i updated_at=$(date +'%j' -r ~/.zcompdump \
-            || stat -f '%Sm' -t '%j' ~/.zcompdump)
-
-          # save time if completion cache has been update recently
-          if [ $(date +'%j') != $updated_at ]; then
-            compinit -u
-          else
-            compinit -C
-          fi
-        else
-          compinit -C
-        fi
-
-        # Case insens only when no case match; after all completions loaded
-        zstyle ':completion:*' matcher-list \
-          "" 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-
-        # Auto rehash for new binaries
-        zstyle ':completion:*' rehash true
-
-        # Enhanced form of menu completion called `menu selection'
-        zmodload -i zsh/complist
-
-        # remove duplicates from pathsDejaVu Sans Mono
-        # keep shell state frozen
-        ttyctl -f
-
-        eval "$(${pkgs.starship}/bin/starship init zsh)"
-        eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+        eval "$(${bin "direnv"} hook zsh)"
         eval $(${pkgs.gitAndTools.hub}/bin/hub alias -s)
-        eval "$(pyenv init -)"
+        ${optionalString isDarwin "eval \"$(pyenv init -)\""}
       '';
   };
 }

@@ -2,7 +2,7 @@
   imports = [ ../../../local/locale.nix ];
   environment.pathsToLink = [ "/share/zsh" ];
   environment = {
-    systemPackages = with pkgs; [
+    systemPackages = with pkgs; with darwin.apple_sdk; [
       binutils
       coreutils
       curl
@@ -17,12 +17,13 @@
       nmap
       ripgrep
       whois
+      # Yeah
+      frameworks.Security
+      frameworks.CoreFoundation
+      frameworks.CoreServices
     ];
-    # NixOS specific shell aliases
     shellAliases = {
-      # fix nixos-option
-      #nixos-option = "nixos-option -I nixpkgs=${toString ../../compat}";
-      rebuild = "sudo darwin-rebuild switch --flake $HOME/env#work";
+      rebuild = "noglob sudo darwin-rebuild switch --flake $HOME/env#work";
     };
   };
   services.nix-daemon.enable = true;

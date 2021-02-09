@@ -1,4 +1,4 @@
-{ stdenv, buildGoModule, fetchFromGitHub }:
+{ lib, buildGoModule, fetchFromGitHub }:
 buildGoModule rec {
   name = "uplink";
   version = "1.19.4";
@@ -13,7 +13,7 @@ buildGoModule rec {
 
   vendorSha256 = "";
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Simple command-line snippet manager, written in Go";
     homepage = "https://github.com/storj/storj";
     license = licenses.mit;

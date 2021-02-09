@@ -1,3 +1,3 @@
 { pkgs, ... }: {
-  home.packages = with pkgs; [ ormolu haskellPackages.haskell-language-server ];
+  home.packages = with pkgs; [ ormolu haskellPackages.haskell-language-server stack ];
 }

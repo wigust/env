@@ -45,7 +45,4 @@ in
     ];
   };
   users.defaultUserShell = pkgs.zsh;
-  environment.shellInit = ''
-    export STARSHIP_CONFIG=${./starship.toml}
-  '';
 }
