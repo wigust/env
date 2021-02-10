@@ -5,7 +5,6 @@
   home-manager.users.bbuscarino = { home, config, homeModules, ... }:
     with home; {
       imports = [
-        ../profiles/alacritty
         ../profiles/develop
         ../profiles/develop/haskell
         ../profiles/develop/nix
@@ -19,7 +18,6 @@
 
       home.file = {
         ".gitconfig".source = ../../secrets/dotfiles/work.gitconfig;
-        ".background-image".source = ../../assets/wallpaper.png;
       };
     };
 }

@@ -64,8 +64,7 @@
 
 
  :lang
- (python +lsp +pyright +poetry +cython)
- (:if IS-MAC (python +pyenv))
+ (python +lsp +pyright +poetry +cython (:if IS-MAC +pyenv))
  json
  data  ;; CSV, etc
  nix
