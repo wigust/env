@@ -13,7 +13,7 @@
  vi-tilde-fringe
  vc-gutter
  tabs
- (popups +defaults)
+ (popups +defaults +all)
  treemacs
  nav-flash
  unicode
@@ -36,11 +36,11 @@
 
  :completion
  (company +childframe)
- helm
+ (ivy +childframe +fuzzy +icons +prescient)
 
  :checkers
- spell
- syntax
+ (spell +aspell)
+ (syntax +childframe)
 
  :term
  vterm
@@ -58,6 +58,10 @@
 
  :os
  (:if IS-MAC macos)
+
+ :app
+ calendar
+
 
  :lang
  (python +lsp +pyright +poetry +cython)
