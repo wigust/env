@@ -25,19 +25,12 @@ import XMonad.Util.EZConfig (additionalKeys)
 import XMonad.Util.Run (runProcessWithInput, safeSpawn, safeSpawnProg, spawnPipe)
 
 
--- NOTES: 0.10 works much better than 0.9, unfortunately distros mostly package 0.9 atm
--- xmobar and fullscreen flash vids (youtube): http://code.google.com/p/xmobar/issues/detail?id=41
+-- Default terminal to use
+myTerminal = "@alacritty@/bin/alacritty"
 
--- TODO: would still like fullscreen flash vids to not crop and leave xmobar drawn
--- TODO: remove the red border when doing fullscreen? tried adding 'smartBorders' to the layoutHook but that didn't work
--- TODO: hook in TopicSpaces, start specific apps on specific workspaces
+spawnXmobar = spawnPipe "@xmobar@/bin/xmobar @xmobarconf@"
 
--- Masks for meh and hyper keys, specific to ErgoDox and similar keyboards
-meh = mod1Mask .|. controlMask .|. shiftMask
-
-hyper = meh .|. mod4Mask
-
-myModMask = meh
+myModMask = mod1Mask .|. controlMask .|. shiftMask
 
 -- Workspaces
 myWorkspaces = map show [1 .. 10]
@@ -51,48 +44,53 @@ myMouseBindings _ = M.empty
 myKeys :: XConfig l -> M.Map (KeyMask, KeySym) (X ())
 myKeys conf =
   M.fromList $
-    [ -- Application launcher
-      ((meh, xK_d), spawn "rofi -lines 12 -padding 18 -width 60 -location 0 -show drun -sidebar-mode -columns 3 -font 'Fira Code 10'"),
-      ((hyper, xK_d), spawn "dmenu_run"),
-      -- Terminal
-      ((meh, xK_Return), spawn $ XMonad.terminal conf),
-      -- Applications
-      ((meh, xK_F1), spawn "chromium"),
-      ((meh, xK_F2), spawn "emacs"),
-      ((meh, xK_F3), spawn "steam"),
-      -- Management
-      ((hyper, xK_k), kill),
-      ((meh, xK_Left), windowGo L False >> resetPointer),
-      ((meh, xK_Right), windowGo R False >> resetPointer),
-      ((hyper, xK_Left), windowSwap' L False >> resetPointer),
-      ((hyper, xK_Right), windowSwap' R False >> resetPointer),
-      -- Restart XMonad, doesn't work as expected because of Nix, gotta fix
-      ( (hyper, xK_r),
-        do
-          newXmonad <- runProcessWithInput "xmonad" [] ""
-          restart newXmonad True
-      ),
-      -- Mute volume.
-      ((0, xF86XK_AudioMute), safeSpawn "amixer" ["-D", "pulse", "sset", "Master", "toggle"]),
-      -- Decrease volume.
-      ((0, xF86XK_AudioLowerVolume), volume "-1%"),
-      ((meh, xK_Page_Down), volume "-1%"),
-      -- Increase volume.
-      ((0, xF86XK_AudioRaiseVolume), volume "+1%"),
-      ((meh, xK_Page_Up), volume "+1%")
-    ]
+    mconcat $ do
+      meh <- [modMask conf, mod3Mask]
+      hyper <- [meh .|. mod4Mask]
       -- Switch workspace - meh-[1..9, 0]
       -- Move to workspace - hyper-[1..9, 0]
-      ++ [ ((mask, key), windows (func n) >> resetPointer)
-           | (n, key) <- zip (XMonad.workspaces conf) ([xK_1 .. xK_9] ++ [xK_0]),
-             (func, mask) <- [(W.greedyView, meh), (W.shift, hyper)]
-         ]
+      workspaceCommands <- [ ((mask, key), windows (func n) >> resetPointer) | (n, key) <- zip (XMonad.workspaces conf) ([xK_1 .. xK_9] ++ [xK_0]), (func, mask) <- [(W.greedyView, meh), (W.shift, hyper)]]
       -- Switch screen - meh-[q,w,e]
       -- Move to screen - hyper-[q,w,e]
-      ++ [ ((mask, key), func sc >> resetPointer)
-           | (key, sc) <- zip [xK_q, xK_w, xK_e] [0 ..],
-             (func, mask) <- [(viewScreen horizontalScreenOrderer, meh), (sendToScreen horizontalScreenOrderer, hyper)]
-         ]
+      screenCommands <-
+       [ ((mask, key), func sc >> resetPointer)
+             | (key, sc) <- zip [xK_q, xK_w, xK_e] [0 ..],
+               (func, mask) <- [(viewScreen horizontalScreenOrderer, meh), (sendToScreen horizontalScreenOrderer, hyper)]
+           ]
+      return
+        [ -- Application launcher
+          ((meh, xK_d), spawn "rofi -lines 12 -padding 18 -width 60 -location 0 -show drun -sidebar-mode -columns 3 -font 'Fira Code 10'"),
+          ((hyper, xK_d), spawn "dmenu_run"),
+          -- Terminal
+          ((meh, xK_Return), spawn $ XMonad.terminal conf),
+          -- Applications
+          ((meh, xK_F1), spawn "chromium"),
+          ((meh, xK_F2), spawn "emacs"),
+          ((meh, xK_F3), spawn "steam"),
+          -- Management
+          ((hyper, xK_k), kill),
+          ((meh, xK_Left), windowGo L False >> resetPointer),
+          ((meh, xK_Right), windowGo R False >> resetPointer),
+          ((hyper, xK_Left), windowSwap' L False >> resetPointer),
+          ((hyper, xK_Right), windowSwap' R False >> resetPointer),
+          -- Restart XMonad, doesn't work as expected because of Nix, gotta fix
+          ( (hyper, xK_r),
+            do
+              newXmonad <- runProcessWithInput "xmonad" [] ""
+              restart newXmonad True
+          ),
+          -- Mute volume.
+          ((0, xF86XK_AudioMute), safeSpawn "amixer" ["-D", "pulse", "sset", "Master", "toggle"]),
+          -- Decrease volume.
+          ((0, xF86XK_AudioLowerVolume), volume "-1%"),
+          ((meh, xK_Page_Down), volume "-1%"),
+          -- Increase volume.
+          ((0, xF86XK_AudioRaiseVolume), volume "+1%"),
+          ((meh, xK_Page_Up), volume "+1%"),
+          workspaceCommands,
+          screenCommands
+        ]
+
   where
     windowSwap' direction wrap = windowSwap direction wrap >> windowGo direction wrap
     volume change = safeSpawn "volume" [change]
@@ -127,11 +125,7 @@ myBorderWidth = 0
 -- Window rules
 myManageHook =
   composeAll
-    [ className =? "Chromium" --> doShift "Web",
-      className =? "Google-chrome" --> doShift "Web",
-      className =? "Alacritty" --> doShift "Terminal",
-      className =? "Emacs" --> doShift "Editor",
-      className =? "Steam" --> doFloat,
+    [ className =? "Steam" --> doFloat,
       className =? "rofi" --> doFloat,
       -- Games
       className =? "factorio" --> doFloat,
@@ -159,29 +153,30 @@ myLayout =
 
 main = do
   xmproc <- spawnXmobar
-  xmonad $ ewmh $
-    def
-      { -- simple stuff
-        terminal = myTerminal,
-        focusFollowsMouse = myFocusFollowsMouse,
-        borderWidth = myBorderWidth,
-        modMask = myModMask,
-        workspaces = myWorkspaces,
-        normalBorderColor = myNormalBorderColor,
-        focusedBorderColor = myFocusedBorderColor,
-        -- key bindings
-        keys = myKeys,
-        mouseBindings = myMouseBindings,
-        -- hooks, layouts
-        layoutHook = smartBorders myLayout,
-        manageHook = myManageHook,
-        handleEventHook = docksEventHook <+> fullscreenEventHook,
-        logHook =
-          dynamicLogWithPP $
-            xmobarPP
-              { ppOutput = hPutStrLn xmproc,
-                ppTitle = xmobarColor xmobarTitleColor "" . shorten 100,
-                ppCurrent = xmobarColor xmobarCurrentWorkspaceColor "",
-                ppSep = "   "
-              }
-      }
+  xmonad $
+    ewmh $
+      def
+        { -- simple stuff
+          terminal = myTerminal,
+          focusFollowsMouse = myFocusFollowsMouse,
+          borderWidth = myBorderWidth,
+          modMask = myModMask,
+          workspaces = myWorkspaces,
+          normalBorderColor = myNormalBorderColor,
+          focusedBorderColor = myFocusedBorderColor,
+          -- key bindings
+          keys = myKeys,
+          mouseBindings = myMouseBindings,
+          -- hooks, layouts
+          layoutHook = smartBorders myLayout,
+          manageHook = myManageHook,
+          handleEventHook = docksEventHook <+> fullscreenEventHook,
+          logHook =
+            dynamicLogWithPP $
+              xmobarPP
+                { ppOutput = hPutStrLn xmproc,
+                  ppTitle = xmobarColor xmobarTitleColor "" . shorten 100,
+                  ppCurrent = xmobarColor xmobarCurrentWorkspaceColor "",
+                  ppSep = "   "
+                }
+        }

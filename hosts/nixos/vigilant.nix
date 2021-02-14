@@ -44,6 +44,27 @@
   environment.systemPackages = with pkgs; [ mesa ];
   services.xserver.videoDrivers = [ "mesa" ];
 
+
+  services.xserver.displayManager.sessionCommands =
+    let
+      customLayout = pkgs.writeText "xkb-layout" ''
+        ! disable capslock
+        clear lock
+        clear lock
+        clear mod3
+        clear mod4
+        keycode 66 = Hyper_L
+        add mod3 = Hyper_L Hyper_R
+        add mod4 = Super_L Super_R
+      '';
+    in
+    ''
+      # setxkbmap -option caps:none
+      ${pkgs.xorg.xmodmap}/bin/xmodmap ${customLayout}
+    '';
+
+
+
   programs.light.enable = true;
   services.actkbd = {
     enable = true;
