@@ -2,7 +2,7 @@
   # nix flake update --update-input <input>
   inputs = {
     master.url = "nixpkgs/master";
-    nixos.url = "nixpkgs/nixos-unstable";
+    nixos.url = "nixpkgs/master";
     home.url = "github:rycee/home-manager";
     emacs.url = "github:nix-community/emacs-overlay";
     hardware.url = "github:nixos/nixos-hardware";
