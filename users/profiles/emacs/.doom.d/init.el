@@ -24,6 +24,7 @@
  :editor
  evil
  fold
+ multiple-cursors
  (format +onsave)
  parinfer
  snippets
@@ -61,7 +62,7 @@
 
  :app
  calendar
-
+ everywhere
 
  :lang
  (python +lsp +pyright +poetry +cython (:if IS-MAC +pyenv))
@@ -69,7 +70,7 @@
  data  ;; CSV, etc
  nix
  emacs-lisp
- (org +brain +pandoc +present +pretty +roam)
+ (org +brain +dragndrop +pandoc +present +pretty +roam)
  web
  (markdown +grip)
  (javascript +lsp)
