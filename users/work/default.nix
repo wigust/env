@@ -6,13 +6,13 @@
     with home; {
       imports = [
         ../profiles/develop
-        ../profiles/develop/haskell
+        #../profiles/develop/haskell
         ../profiles/develop/nix
         ../profiles/develop/python
         ../profiles/direnv
         ../profiles/emacs
         ../profiles/git
-        ../profiles/im
+        #../profiles/im
         ../profiles/zsh
       ] ++ homeModules;
 
