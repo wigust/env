@@ -1,3 +1,3 @@
 (unpin! format-all)
 (unpin! which-key)
-(disable-packages! company-anaconda anaconda-mode)
+(disable-packages! company-anaconda anaconda-mode pipenv)
