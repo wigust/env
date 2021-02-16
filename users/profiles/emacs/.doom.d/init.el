@@ -6,7 +6,7 @@
  modeline
  ophints
  minimap
- (ligatures +extra +fira)
+ (ligatures +fira)
  hl-todo
  workspaces
  (window-select +numbers)
@@ -71,7 +71,7 @@
  nix
  emacs-lisp
  (org +brain +dragndrop +pandoc +present +pretty +roam)
- web
+ (web +lsp)
  (markdown +grip)
  (javascript +lsp)
  hy
