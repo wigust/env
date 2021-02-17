@@ -15,38 +15,38 @@ Config {
    , template = "%StdinReader% }{<fc=#ff6ac1>%cpu%</fc> | <fc=#f1fa8c>%memory%</fc> | <fc=#57c7ff>%internet%</fc> | <fc=#bd93f9>%backlight%  %volume%</fc> | <fc=#5af78e>%battery%</fc> | <fc=#57c7ff>%clock% </fc>" 
 
    -- general behavior
-   , lowerOnStart =     False    -- send to bottom of window stack on start
-   , hideOnStart =      False   -- start with window unmapped (hidden)
+   --, lowerOnStart =     False    -- send to bottom of window stack on start
+   --, hideOnStart =      False   -- start with window unmapped (hidden)
    , allDesktops =      True    -- show on all desktops
-   , overrideRedirect = False    -- set the Override Redirect flag (Xlib)
-   , pickBroadest =     False   -- choose widest display (multi-monitor)
+   --, overrideRedirect = False    -- set the Override Redirect flag (Xlib)
+   --, pickBroadest =     False   -- choose widest display (multi-monitor)
    , persistent =       True    -- enable/disable hiding (True = disabled),
    , iconRoot = "@icons@"
 
    -- plugins
    , commands = [
       --cpu 
-      Run Com "@cpu@" [] "cpu" 50,
+      Run Com "@cpu@/bin/cpu" [] "cpu" 50,
 
       --memory
-      --  Run Com "@memory@" [] "memory" 50,
+      Run Com "@memory@/bin/memory" [] "memory" 50,
 
       --internet
-      --  Run Com "@internet@" [] "internet" 50,
+      Run Com "@internet@/bin/internet" [] "internet" 50,
 
       --backlight
-      --  Run Com "@backlight@" [] "backlight" 50,
+      Run Com "@backlight@/bin/backlight" [] "backlight" 50,
 
       --volume
-      --  Run Com "@volume@" [] "volume" 50,
+      Run Com "@volume@/bin/volume" [] "volume" 50,
        
       --battery
-      --  Run Com "@battery@" [] "battery" 50,
+      Run Com "@battery@/bin/battery" [] "battery" 50,
 
       --clock
-      --  Run Com "@clock@" [] "clock" 600,
+      Run Com "@clock@/bin/clock" [] "clock" 600,
 
-       --stdinreader
-       Run StdinReader
+      --stdinreader
+      Run StdinReader
         	]
    }

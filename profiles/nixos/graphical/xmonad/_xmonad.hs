@@ -67,6 +67,8 @@ myKeys conf =
           ((meh, xK_F1), spawn "chromium"),
           ((meh, xK_F2), spawn "emacs"),
           ((meh, xK_F3), spawn "steam"),
+          ((hyper, xK_n), spawn "emacsclient --eval \"(emacs-everywhere)\""),
+          
           -- Management
           ((hyper, xK_k), kill),
           ((meh, xK_Left), windowGo L False >> resetPointer),

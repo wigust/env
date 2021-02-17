@@ -55,6 +55,8 @@ in
       emacs-all-the-icons-fonts
       ispell
       (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
+      xdotool
+      xorg.xwininfo
 
       # Languages
       nodePackages.dockerfile-language-server-nodejs

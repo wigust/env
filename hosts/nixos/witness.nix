@@ -2,7 +2,6 @@
 {
   imports = with hardware; [
     ../../profiles/nixos/graphical
-    ../../profiles/nixos/graphical/games
     ../../profiles/nixos/graphical/xmonad
     ../../profiles/nixos/network
     ../../users/ben
