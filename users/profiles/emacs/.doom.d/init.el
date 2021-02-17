@@ -79,4 +79,5 @@
  (purescript +lsp)
  elm
  (sh +lsp)
- (haskell +lsp))
+ (haskell +lsp)
+ plantuml)
