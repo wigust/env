@@ -62,7 +62,7 @@
 
  :app
  calendar
- everywhere
+ (:if IS-LINUX everywhere)
 
  :lang
  (python +lsp +pyright +poetry +cython (:if IS-MAC +pyenv))

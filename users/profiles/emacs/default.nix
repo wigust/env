@@ -55,8 +55,7 @@ in
       emacs-all-the-icons-fonts
       ispell
       (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
-      xdotool
-      xorg.xwininfo
+
 
       # Languages
       nodePackages.dockerfile-language-server-nodejs
@@ -67,5 +66,9 @@ in
 
       sqlite
       git
-    ] ++ optionals isLinux (with pkgs; [ libvterm ]);
+    ] ++ optionals isLinux (with pkgs; [
+      libvterm
+      xdotool
+      xorg.xwininfo
+    ]);
 }
