@@ -23,6 +23,7 @@ in
         ../profiles/im
         ../profiles/xmonad
         ../profiles/zsh
+        ../profiles/gpg
       ] ++ homeModules;
 
       home.file = {

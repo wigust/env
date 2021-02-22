@@ -7,3 +7,20 @@
 (after! '(direnv lsp)
   (advice-add 'lsp :before #'direnv-update-environment)
   (setq lsp-enable-completion-at-point t))
+(after! jira
+  (setq jiralib2-url              "https://tracker.morsecorp.com"
+        jiralib2-auth             'basic
+        jiralib2-user-login-name  "bbuscarino"
+        jiralib2-token            nil
+
+        ejira-org-directory       "~/.jira"
+        ejira-projects            '("MATE")
+
+        ejira-priorities-alist    '(("Highest" . ?A)
+                                    ("High"    . ?B)
+                                    ("Medium"  . ?C)
+                                    ("Low"     . ?D)
+                                    ("Lowest"  . ?E))
+        ejira-todo-states-alist   '(("To Do"       . 1)
+                                    ("In Progress" . 2)
+                                    ("Done"        . 3))))

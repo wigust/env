@@ -56,6 +56,7 @@
  (magit +forge)
  prodigy
  terraform
+ jira
 
  :os
  (:if IS-MAC macos)
@@ -63,21 +64,24 @@
  :app
  calendar
  (:if IS-LINUX everywhere)
+ irc
 
  :lang
- (python +lsp +pyright +poetry +cython (:if IS-MAC +pyenv))
- json
- data  ;; CSV, etc
- nix
- emacs-lisp
- (org +brain +dragndrop +pandoc +present +pretty +roam)
- (web +lsp)
- (markdown +grip)
- (javascript +lsp)
- hy
- yaml
- (purescript +lsp)
- elm
- (sh +lsp)
+ (cc +lsp)
  (haskell +lsp)
- plantuml)
+ (javascript +lsp)
+ (markdown +grip)
+ (org +brain +dragndrop +pandoc +present +pretty +roam)
+ (purescript +lsp)
+ (python +lsp +pyright +poetry +cython (:if IS-MAC +pyenv))
+ (sh +lsp)
+ (web +lsp)
+ data  ;; CSV, etc
+ elm
+ emacs-lisp
+ hy
+ json
+ nix
+ plantuml
+ yaml
+ )
