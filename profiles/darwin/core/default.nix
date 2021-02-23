@@ -55,15 +55,14 @@
     gc.user = "bbuscarino";
     useSandbox = true;
     package = pkgs.nixFlakes;
-    buildCores = lib.mkDefault 4;
+    buildCores = lib.mkDefault 8;
 
-    allowedUsers = [ "nix" ];
+    allowedUsers = ["root" "nix" "bbuscarino" ];
 
-    trustedUsers = [ "root" "nix" ];
+    trustedUsers = ["root" "nix" "bbuscarino" ];
 
     extraOptions = ''
       experimental-features = nix-command flakes ca-references
-      min-free = 536870912
     '';
 
   };
