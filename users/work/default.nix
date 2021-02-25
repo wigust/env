@@ -8,6 +8,7 @@
         ../profiles/develop
         #../profiles/develop/haskell
         ../profiles/develop/nix
+        ../profiles/develop/cpp
         ../profiles/develop/python
         ../profiles/direnv
         ../profiles/emacs

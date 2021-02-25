@@ -23,7 +23,7 @@
       frameworks.CoreServices
     ];
     shellAliases = {
-      rebuild = "noglob sudo darwin-rebuild switch --flake $HOME/env#work";
+      rebuild = "noglob darwin-rebuild switch --flake $HOME/env#work";
     };
   };
   services.nix-daemon.enable = true;

@@ -18,7 +18,11 @@
       brewfile = true;
       noLock = true;
     };
-    brews = [];
+    brews = [
+      "pyenv"
+      "openssl@1.1"
+    ];
+    taps = ["homebrew/cask-versions" "homebrew/cask" "adoptopenjdk/openjdk" "homebrew/cask-fonts" "kowainik/tap"];
     casks = [
       "docker"
       "adobe-acrobat-reader"
