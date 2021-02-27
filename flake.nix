@@ -3,6 +3,7 @@
   inputs = {
     master.url = "nixpkgs/master";
     nixos.url = "nixpkgs/master";
+    nixos-2003.url = "nixpkgs/nixos-20.03";
     home.url = "github:rycee/home-manager";
     emacs.url = "github:nix-community/emacs-overlay";
     hardware.url = "github:nixos/nixos-hardware";
@@ -14,7 +15,7 @@
     nix-darwin.inputs.nixpkgs.follows = "master";
   };
 
-  outputs = inputs@{ self, home, nixos, master, hardware, devshell, nur, emacs, flake-utils, nix-darwin, nixpkgs-darwin }:
+  outputs = inputs@{ self, home, nixos, master, hardware, devshell, nur, emacs, flake-utils, nixos-2003, nix-darwin, nixpkgs-darwin }:
     let
       inherit (builtins) attrValues;
       inherit (flake-utils.lib) eachDefaultSystem flattenTreeSystem;
@@ -78,10 +79,16 @@
             ]
               system;
 
+            nixos-old = pkgImport nixos-2003 [ ] system;
+
             pkgs =
               let
                 override = import ./pkgs/override.nix;
                 overlays = [
+                  (final: prev: {
+                    gstreamer = nixos-old.gstreamer;
+                    gst_plugins_base = nixos-old.gst_plugins_base;
+                  })
                   (override unstable)
                   self.overlay
                   (final: prev: {

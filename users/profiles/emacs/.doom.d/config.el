@@ -24,3 +24,5 @@
         ejira-todo-states-alist   '(("To Do"       . 1)
                                     ("In Progress" . 2)
                                     ("Done"        . 3))))
+(after! '(haskell format)
+  (setq-hook! 'haskell-mode-hook +format-with 'ormolu))

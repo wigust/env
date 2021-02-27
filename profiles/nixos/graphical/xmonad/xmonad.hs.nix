@@ -2,7 +2,7 @@
 let
   inherit (builtins) readFile;
   inherit (pkgs) writeScript;
-    xmobarconf = pkgs.runCommand "xmobar.hs"
+  xmobarconf = pkgs.runCommand "xmobar.hs"
     {
       icons = pkgs.fetchFromGitHub
         {
@@ -88,7 +88,8 @@ let
       '';
     } "substituteAll ${./_xmobar.hs} $out";
 in
-pkgs.runCommand "xmonad.hs" {
+pkgs.runCommand "xmonad.hs"
+{
   inherit (pkgs) alacritty xmobar;
   inherit xmobarconf;
 } "substituteAll ${./_xmonad.hs} $out"

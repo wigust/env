@@ -3,7 +3,9 @@
   imports = with hardware; [
     ../../profiles/nixos/graphical
     ../../profiles/nixos/graphical/xmonad
+    ../../profiles/nixos/graphical/games
     ../../profiles/nixos/network
+    ../../profiles/nixos/virt
     ../../users/ben
     # Hardware
     common-cpu-amd
@@ -49,7 +51,7 @@
 
   nix.maxJobs = lib.mkDefault 16;
   hardware.nvidia.prime.offload.enable = false;
-
+  services.xserver.videoDrivers = [ "nvidia" ];
   services.xserver.displayManager.setupCommands = ''
     ${pkgs.xlibs.xrandr}/bin/xrandr --output HDMI-0 --left-of DVI-D-0 
     ${pkgs.xlibs.xrandr}/bin/xrandr --output DVI-D-0 --primary

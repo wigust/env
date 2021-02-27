@@ -81,11 +81,11 @@
     },
     "master": {
       "locked": {
-        "lastModified": 1613525216,
-        "narHash": "sha256-LdSFEmwGFJMHvQmniJAy725SS2guiZ2DC9nrKPqrH6U=",
+        "lastModified": 1614313282,
+        "narHash": "sha256-UyUBXiXpiplkoxXdGr/XwvER9t5HTbvNjTnjzWTuoy8=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "141d867f2207fa59157e816424df249a230f9f43",
+        "rev": "c33e84e655ee6929927c915a7d195a939f2f84a5",
         "type": "github"
       },
       "original": {
@@ -127,6 +127,21 @@
       "original": {
         "id": "nixpkgs",
         "ref": "master",
+        "type": "indirect"
+      }
+    },
+    "nixos-2003": {
+      "locked": {
+        "lastModified": 1614389971,
+        "narHash": "sha256-AWmxiRwQ/ZI/mXIAW/yj7ziT2NoiD524n0a3LLtqiyg=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "462c6fe4b115804ea4d5bee7103c0f46ff9f9cfb",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "nixos-20.03",
         "type": "indirect"
       }
     },
@@ -183,6 +198,7 @@
         "master": "master",
         "nix-darwin": "nix-darwin",
         "nixos": "nixos",
+        "nixos-2003": "nixos-2003",
         "nixpkgs-darwin": "nixpkgs-darwin",
         "nur": "nur"
       }

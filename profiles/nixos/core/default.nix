@@ -60,7 +60,6 @@
     optimise.automatic = true;
     useSandbox = true;
     package = pkgs.nixFlakes;
-
     allowedUsers = [ "@wheel" ];
 
     trustedUsers = [ "root" "@wheel" ];

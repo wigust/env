@@ -1,6 +1,7 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
     minecraft
+    eve-online
   ];
 
   # S T E A M
