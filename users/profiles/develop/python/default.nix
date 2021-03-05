@@ -17,7 +17,7 @@ in
       poetry
       black
       nodePackages.pyright
-    ] ++ optionals isLinux [ jetbrains.pycharm-professional ];
+    ];
 
   home.sessionPath = optionals isDarwin [ "$PYENV_ROOT/bin" ];
 
