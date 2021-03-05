@@ -7,7 +7,7 @@ in
   programs.emacs = {
     enable = true;
     package = pkgs.emacsGcc.override {
-      withXwidgets = isLinux;
+      #withXwidgets = isLinux;
     };
     extraPackages = epkgs: [ epkgs.vterm ];
   };

@@ -26,3 +26,6 @@
                                     ("Done"        . 3))))
 (after! '(haskell format)
   (setq-hook! 'haskell-mode-hook +format-with 'ormolu))
+
+(after! '( format)
+  (setq-hook! 'nix-mode-hook +format-with 'nixpkgs-fmt))
