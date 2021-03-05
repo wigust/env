@@ -57,9 +57,9 @@
     package = pkgs.nixFlakes;
     buildCores = lib.mkDefault 8;
 
-    allowedUsers = ["root" "nix" "bbuscarino" ];
+    allowedUsers = [ "root" "nix" "bbuscarino" ];
 
-    trustedUsers = ["root" "nix" "bbuscarino" ];
+    trustedUsers = [ "root" "nix" "bbuscarino" ];
 
     extraOptions = ''
       experimental-features = nix-command flakes ca-references

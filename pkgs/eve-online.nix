@@ -23,7 +23,7 @@ let
   steam-run = (steam.override { nativeOnly = true; }).run;
   script = writeScriptBin "eve-online" ''
     #!${stdenv.shell}
-    ${steam.run} @out@/launcher/evelauncher
+    ${steam.run}/bin/steam-run @out@/launcher/evelauncher
   '';
 in
 mkDerivation rec {
@@ -38,7 +38,7 @@ mkDerivation rec {
   dontConfigure = true;
   dontBuild = true;
 
-  nativeBuildInputs = [ autoPatchelfHook bashInteractive ];
+  nativeBuildInputs = [ steam.run autoPatchelfHook bashInteractive ];
 
   buildInputs = [
     alsaLib
@@ -65,7 +65,7 @@ mkDerivation rec {
     cp -r ${
       makeDesktopItem {
         name = "com.ccp.eve-online";
-        exec = "@out@/launcher/evelauncher";
+        exec = "${steam.run}/bin/steam-run @out@/launcher/evelauncher";
         terminal = "false";
         desktopName = "Eve Online";
         genericName = "Internet Spaceships";
