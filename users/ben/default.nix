@@ -12,7 +12,6 @@ in
       imports = [
         ../profiles/alacritty
         ../profiles/develop
-        ../profiles/develop/haskell
         ../profiles/develop/nix
         ../profiles/develop/purescript
         ../profiles/develop/python
