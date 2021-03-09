@@ -3,6 +3,7 @@
   imports = with hardware; [
     ../../profiles/nixos/graphical
     ../../profiles/nixos/graphical/xmonad
+    ../../profiles/nixos/security/yubikey.nix
     ../../profiles/nixos/network
     ../../users/ben
     # Hardware

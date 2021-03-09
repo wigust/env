@@ -4,6 +4,7 @@
     ../../profiles/nixos/graphical
     ../../profiles/nixos/graphical/xmonad
     ../../profiles/nixos/graphical/games
+    ../../profiles/nixos/security/yubikey.nix
     ../../profiles/nixos/network
     ../../profiles/nixos/virt
     ../../users/ben
