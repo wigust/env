@@ -10,6 +10,14 @@
     nur.overlay
     devshell.overlay
     sops-nix.overlay
+    (final: prev:
+      let
+        old = prev.lib.dev.os.pkgImport inputs.nixos-2003 [ ] prev.system;
+      in
+      {
+        gstreamer = old.gstreamer;
+        gst_plugins_base = old.gst_plugins_base;
+      })
     (final: prev: {
       deploy-rs = deploy.packages.${prev.system}.deploy-rs;
     })

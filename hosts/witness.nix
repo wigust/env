@@ -9,7 +9,7 @@
     ../profiles/network
     ../profiles/virt
     ../profiles/ssh
-    ../profiles/hydra
+    # ../profiles/hydra
     ../users/ben
     ../users/root
     # Hardware

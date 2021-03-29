@@ -9,11 +9,11 @@
       "tailscale_key"
       "cache_private_key"
       "rclone_conf"
-      "yeet"
       "restic_password"
       "gitconfig_home"
       "gitconfig_work"
       "synthetic_conf"
-    ] (_: {});
+    ]
+      (_: { });
   };
 }

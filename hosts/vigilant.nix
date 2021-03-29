@@ -29,6 +29,8 @@
     initrd.availableKernelModules =
       [ "nvme" "ehci_pci" "xhci_pci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
     kernelModules = [ "kvm-amd" ];
+    blacklistedKernelModules = [ "r8169" ];
+    extraModulePackages = [ config.boot.kernelPackages.r8168 ];
   };
   fileSystems."/" =
     {
@@ -41,6 +43,13 @@
       device = "/dev/disk/by-uuid/AE33-365C";
       fsType = "vfat";
     };
+  services.logind.lidSwitchExternalPower = "ignore";
+  services.fprintd.enable = true;
+  services.fwupd.enable = true;
+  security.pam.services = {
+    login.fprintAuth = true;
+    xscreensaver.fprintAuth = true;
+  };
 
   swapDevices =
     [{ device = "/dev/disk/by-uuid/4eed79ae-0676-4f69-a27e-1f503993869b"; }];

@@ -15,7 +15,7 @@ in
           ptpython
         ]))
       poetry
-      black
+      #black
       nodePackages.pyright
     ];
 

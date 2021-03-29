@@ -6,7 +6,7 @@
  modeline
  ophints
  minimap
- (ligatures +fira)
+ (:if IS-MAC (ligatures +fira))
  hl-todo
  workspaces
  (window-select +numbers)
@@ -26,7 +26,7 @@
  fold
  multiple-cursors
  (format +onsave)
- parinfer
+ (parinfer +rust)
  snippets
 
  :emacs

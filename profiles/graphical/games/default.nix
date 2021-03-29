@@ -1,7 +1,8 @@
 { pkgs, ... }: {
   environment.systemPackages = with pkgs; [
     minecraft
-    #eve-online
+    eve-online
+    pyfa
   ];
 
   # S T E A M

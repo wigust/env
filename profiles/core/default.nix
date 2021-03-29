@@ -96,8 +96,21 @@ in
   };
 
   fonts = {
-    fonts = with pkgs; [ powerline-fonts dejavu_fonts ];
-
+    #fontDir.enable = true;
+    enableDefaultFonts = true;
+    fonts = with pkgs; [
+      corefonts
+      font-awesome-ttf
+      fira-code
+      fira-code-symbols
+      jetbrains-mono
+      siji
+      noto-fonts
+      powerline-fonts
+      dejavu_fonts
+      nerdfonts
+      hack-font
+    ];
     fontconfig.defaultFonts = {
 
       monospace = [ "DejaVu Sans Mono for Powerline" ];

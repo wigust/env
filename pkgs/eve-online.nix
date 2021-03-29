@@ -37,7 +37,7 @@ stdenv.mkDerivation rec {
   dontConfigure = true;
   dontBuild = true;
 
-  nativeBuildInputs = [ steam.run autoPatchelfHook bashInteractive ];
+  nativeBuildInputs = [ steam.run qt512.wrapQtAppsHook autoPatchelfHook bashInteractive ];
 
   buildInputs = [
     alsaLib

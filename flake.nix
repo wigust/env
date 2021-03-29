@@ -35,6 +35,8 @@
       utils.url = "github:numtide/flake-utils";
       pkgs.url = "path:./pkgs";
       pkgs.inputs.nixpkgs.follows = "nixos";
+      nixos-2003.url = "nixpkgs/nixos-20.03";
+      mobile-nixos.url = "github:archseer/mobile-nixos/flake-pr";
     };
 
   outputs = inputs@{ nixos, self, utils, ... }:
