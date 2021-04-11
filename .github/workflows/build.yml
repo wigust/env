@@ -20,22 +20,19 @@ jobs:
         nix_path: nixpkgs=channel:nixos-unstable
         extra_nix_config: |
           experimental-features = nix-command flakes
-    - uses: cachix/cachix-action@v6
-      env:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-      with:
-        name: busc-env
-        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - name: Setup build dependencies
+      run: |
+        nix-env -i jq cachix -f '<nixpkgs>'
     - name: Add binary caches
       run: |
         cachix use busc-env
-    - name: Setup
-      run: |
-        nix-env -i jq -f '<nixpkgs>'
-        nix-env -i cachix -f '<nixpkgs>'
+      env:
+        CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_SIGNING_KEY }}'        
     - name: Build
       run: |
         nix build .#nixosConfigurations.${{ matrix.system }}.config.system.build.toplevel
     - name: Cache
       run: |
         nix flake archive --json | jq -r '.path,(.inputs|to_entries[].value.path)' | cachix push busc-env
+      env:
+        CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_SIGNING_KEY }}'        

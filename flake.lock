@@ -572,7 +572,7 @@
         ]
       },
       "locked": {
-        "narHash": "sha256-XwoLWq+QqtoIP0hrzfbbm4oewh/xvXl3OST9/oxbMRE=",
+        "narHash": "sha256-2Hxl8GmhTjhsI4ExXOOHEcKPsbYAVbhITR2V4qKYPD8=",
         "path": "./pkgs",
         "type": "path"
       },
