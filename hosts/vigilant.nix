@@ -1,4 +1,4 @@
-{ lib, config, pkgs, hardware, ... }: {
+{ lib, config, pkgs, hardware, suites, ... }: {
 
   imports = with hardware; [
     ../profiles/graphical
@@ -15,7 +15,7 @@
     common-pc
     common-pc-ssd
     lenovo-thinkpad-t14s
-  ];
+  ] ++ suites.base;
 
   boot = {
     kernelPackages = pkgs.linuxPackages_5_10;

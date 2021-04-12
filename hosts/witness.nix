@@ -1,4 +1,4 @@
-{ lib, config, pkgs, hardware, ... }:
+{ lib, config, pkgs, hardware, suites, ... }:
 {
   imports = with hardware; [
     ../profiles/graphical
@@ -17,7 +17,7 @@
     common-gpu-nvidia
     common-pc
     common-pc-ssd
-  ];
+  ] ++ suites.base;
 
   sound.mediaKeys.enable = true;
 
@@ -58,8 +58,8 @@
   hardware.nvidia.prime.offload.enable = false;
   services.xserver.videoDrivers = [ "nvidia" ];
   services.xserver.displayManager.setupCommands = ''
-    ${pkgs.xlibs.xrandr}/bin/xrandr --output HDMI-0 --left-of DVI-D-0 
+    ${pkgs.xlibs.xrandr}/bin/xrandr --output HDMI-0 --left-of DVI-D-0
     ${pkgs.xlibs.xrandr}/bin/xrandr --output DVI-D-0 --primary
-    ${pkgs.xlibs.xrandr}/bin/xrandr --output DP-0 --right-of DVI-D-0 
+    ${pkgs.xlibs.xrandr}/bin/xrandr --output DP-0 --right-of DVI-D-0
   '';
 }

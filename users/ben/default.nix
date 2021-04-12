@@ -14,7 +14,7 @@ in
     path = "${config.users.users.ben.home}/.gitconfig";
   };
 
-  home-manager.users.ben = { home, ... }:
+  home-manager.users.ben = { home, suites, ... }:
     {
       imports = [
         ../profiles/alacritty
@@ -31,7 +31,7 @@ in
         ../profiles/im
         ../profiles/xmonad
         ../profiles/zsh
-      ];
+      ] ++ suites.base;
 
       home.file = {
         ".background-image".source = ../../assets/wallpaper.png;
@@ -39,7 +39,6 @@ in
     };
 
   users.users.ben = {
-    uid = 1000;
     # mkpasswd -m sha-512 hunter1 >> ./ben.hashedPassword
     hashedPassword = lib.fileContents ./ben.hashedPassword;
     isNormalUser = true;

@@ -95,8 +95,10 @@ in
       };
   };
 
+  time.timeZone = "America/New_York";
+
   fonts = {
-    #fontDir.enable = true;
+    fontDir.enable = true;
     enableDefaultFonts = true;
     fonts = with pkgs; [
       corefonts
@@ -151,11 +153,13 @@ in
     interactiveShellInit = ''
       eval "$(${pkgs.direnv}/bin/direnv hook bash)"
     '';
-    security = {
-      protectKernelImage = true;
-    };
+  };
 
-    services.earlyoom.enable = true;
+  security = {
+    protectKernelImage = true;
+  };
 
-    users.mutableUsers = false;
-  }
+  services.earlyoom.enable = true;
+
+  users.mutableUsers = false;
+}
