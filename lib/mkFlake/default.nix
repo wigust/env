@@ -26,7 +26,7 @@ let
     overlay = cfg.packages;
     inherit (cfg) overlays;
 
-    deploy.nodes = os.mkNodes deploy self.nixosConfigurations;
+    # deploy.nodes = os.mkNodes deploy self.nixosConfigurations;
   };
 
   systemOutputs = utils.lib.eachDefaultSystem (system:
@@ -37,16 +37,16 @@ let
       legacyPackages = os.mkPackages { inherit pkgs; };
     in
     {
-      checks = pkgs-lib.tests.mkChecks {
-        inherit (self.deploy) nodes;
-        hosts = self.nixosConfigurations;
-        homes = self.homeConfigurations;
-      };
+      # checks = pkgs-lib.tests.mkChecks {
+      #   # inherit (self.deploy) nodes;
+      #   hosts = self.nixosConfigurations;
+      #   homes = self.homeConfigurations;
+      # };
 
       inherit legacyPackages;
       packages = dev.filterPackages system legacyPackages;
 
-      devShell = pkgs-lib.shell;
+      # devShell = pkgs-lib.shell;
     });
 in
 outputs // systemOutputs
